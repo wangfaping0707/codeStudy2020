@@ -1,0 +1,859 @@
+[
+  {
+    "name": "查询结算单明细列表",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "clearItemType查询结算单明细列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "clearItemType查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "clearItemType": "${查询结算单明细列表}[resp][json][result][records][0][clearItemType]",
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "purchaserName": "${查询结算单明细列表}[resp][json][result][records][0][purchaserName]",
+                      "clearItemType": "${查询结算单明细列表}[resp][json][result][records][0][clearItemType]",
+                      "clearItemTypeDesc": "${查询结算单明细列表}[resp][json][result][records][0][clearItemTypeDesc]",
+                      "clearBizNo": "${查询结算单明细列表}[resp][json][result][records][0][clearBizNo]",
+                      "startDate": "${查询结算单明细列表}[resp][json][result][records][0][startDate]",
+                      "endDate": "${查询结算单明细列表}[resp][json][result][records][0][endDate]",
+                      "shopId": "${查询结算单明细列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询结算单明细列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                      "settleStatus": "${查询结算单明细列表}[resp][json][result][records][0][settleStatus]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "startDate查询结算单明细列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "startDate查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                "startDate": "${查询结算单明细列表}[resp][json][result][records][0][startDate]",
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "purchaserName": "${查询结算单明细列表}[resp][json][result][records][0][purchaserName]",
+                      "clearItemType": "${查询结算单明细列表}[resp][json][result][records][0][clearItemType]",
+                      "clearItemTypeDesc": "${查询结算单明细列表}[resp][json][result][records][0][clearItemTypeDesc]",
+                      "clearBizNo": "${查询结算单明细列表}[resp][json][result][records][0][clearBizNo]",
+                      "startDate": "${查询结算单明细列表}[resp][json][result][records][0][startDate]",
+                      "endDate": "${查询结算单明细列表}[resp][json][result][records][0][endDate]",
+                      "shopId": "${查询结算单明细列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询结算单明细列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                      "settleStatus": "${查询结算单明细列表}[resp][json][result][records][0][settleStatus]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "endDate查询结算单明细列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "endDate查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                "endDate": "${查询结算单明细列表}[resp][json][result][records][0][endDate]",
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "purchaserName": "${查询结算单明细列表}[resp][json][result][records][0][purchaserName]",
+                      "clearItemType": "${查询结算单明细列表}[resp][json][result][records][0][clearItemType]",
+                      "clearItemTypeDesc": "${查询结算单明细列表}[resp][json][result][records][0][clearItemTypeDesc]",
+                      "clearBizNo": "${查询结算单明细列表}[resp][json][result][records][0][clearBizNo]",
+                      "startDate": "${查询结算单明细列表}[resp][json][result][records][0][startDate]",
+                      "endDate": "${查询结算单明细列表}[resp][json][result][records][0][endDate]",
+                      "shopId": "${查询结算单明细列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询结算单明细列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                      "settleStatus": "${查询结算单明细列表}[resp][json][result][records][0][settleStatus]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "settleStatus查询结算单明细列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "settleStatus查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "settleStatus": "${查询结算单明细列表}[resp][json][result][records][0][settleStatus]",
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "purchaserName": "${查询结算单明细列表}[resp][json][result][records][0][purchaserName]",
+                      "clearItemType": "${查询结算单明细列表}[resp][json][result][records][0][clearItemType]",
+                      "clearItemTypeDesc": "${查询结算单明细列表}[resp][json][result][records][0][clearItemTypeDesc]",
+                      "clearBizNo": "${查询结算单明细列表}[resp][json][result][records][0][clearBizNo]",
+                      "startDate": "${查询结算单明细列表}[resp][json][result][records][0][startDate]",
+                      "endDate": "${查询结算单明细列表}[resp][json][result][records][0][endDate]",
+                      "shopId": "${查询结算单明细列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询结算单明细列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                      "settleStatus": "${查询结算单明细列表}[resp][json][result][records][0][settleStatus]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "shopName查询结算单明细列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "shopName查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "purchaserName": "${查询结算单明细列表}[resp][json][result][records][0][purchaserName]",
+                      "clearItemType": "${查询结算单明细列表}[resp][json][result][records][0][clearItemType]",
+                      "clearItemTypeDesc": "${查询结算单明细列表}[resp][json][result][records][0][clearItemTypeDesc]",
+                      "clearBizNo": "${查询结算单明细列表}[resp][json][result][records][0][clearBizNo]",
+                      "startDate": "${查询结算单明细列表}[resp][json][result][records][0][startDate]",
+                      "endDate": "${查询结算单明细列表}[resp][json][result][records][0][endDate]",
+                      "shopId": "${查询结算单明细列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询结算单明细列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                      "settleStatus": "${查询结算单明细列表}[resp][json][result][records][0][settleStatus]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "purchaserName查询结算单明细列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "purchaserName查询结算单明细列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/clear_order/details?",
+              "params": {
+                "purchaserName": "${查询结算单明细列表}[resp][json][result][records][0][purchaserName]",
+                "page": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "purchaserName": "${查询结算单明细列表}[resp][json][result][records][0][purchaserName]",
+                      "clearItemType": "${查询结算单明细列表}[resp][json][result][records][0][clearItemType]",
+                      "clearItemTypeDesc": "${查询结算单明细列表}[resp][json][result][records][0][clearItemTypeDesc]",
+                      "clearBizNo": "${查询结算单明细列表}[resp][json][result][records][0][clearBizNo]",
+                      "startDate": "${查询结算单明细列表}[resp][json][result][records][0][startDate]",
+                      "endDate": "${查询结算单明细列表}[resp][json][result][records][0][endDate]",
+                      "shopId": "${查询结算单明细列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询结算单明细列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询结算单明细列表}[resp][json][result][records][0][shopName]",
+                      "settleStatus": "${查询结算单明细列表}[resp][json][result][records][0][settleStatus]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
