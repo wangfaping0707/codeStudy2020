@@ -1,0 +1,53 @@
+[
+  {
+    "name": "功能集测试初始化",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "测试用例初始化"
+    ],
+    "keywords": [
+      {
+        "name": "功能集测试--创建功能集",
+        "args": [
+          "${url}",
+          "${version}",
+          "${token}",
+          "${resourceCode}",
+          "${resourceName}",
+          "${resourcesetCode}",
+          "${resourcesetName}",
+          "${appId}"
+        ],
+        "steps": [
+          {
+            "name": "创建资源码",
+            "keyword": "创建资源码",
+            "type": "keyword",
+            "params": [
+              "${url}",
+              "${version}",
+              "${token}",
+              "${resourceCode}",
+              "${resourceName}"
+            ]
+          },
+          {
+            "name": "创建功能集",
+            "keyword": "创建功能集",
+            "type": "keyword",
+            "params": [
+              "${url}",
+              "${version}",
+              "${token}",
+              "${resourcesetCode}",
+              "${resourcesetName}",
+              "${创建资源码}[resp][json][result][resourceId]",
+              "${appId}"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

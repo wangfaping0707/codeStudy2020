@@ -1,0 +1,277 @@
+[
+  {
+    "name": "查询促销活动列表",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "正向查询促销活动列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询品牌方",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/brand/infos?page=1&pageSize=2",
+              "data": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "新建商品",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/product",
+              "data": null,
+              "req_json": {
+                "barCode": "${11位随机串}",
+                "bizType": "1",
+                "brandCode": "${查询品牌方}[resp][json][result][records][0][brandCode]",
+                "category3Code": "10000442",
+                "currencyType": "CNY",
+                "isCross": "0",
+                "orgin": "China",
+                "productCode": "s2030",
+                "productName": "紫色暖心糖果女巫",
+                "productPicUrl": "www.baidu.com/",
+                "salePrice": 1789.6519,
+                "settlementPrice": 1789.6519,
+                "spec": "150*80*170",
+                "suggestPrice": 1900.65,
+                "unit": "个"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "新建商品1",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/product",
+              "data": null,
+              "req_json": {
+                "barCode": "${11位随机串}1",
+                "bizType": "1",
+                "brandCode": "${查询品牌方}[resp][json][result][records][0][brandCode]",
+                "category3Code": "10000442",
+                "currencyType": "CNY",
+                "isCross": "0",
+                "orgin": "China",
+                "productCode": "s2030",
+                "productName": "紫色暖心糖果女巫",
+                "productPicUrl": "www.baidu.com/",
+                "salePrice": 1789.6519,
+                "settlementPrice": 1789.6519,
+                "spec": "150*80*170",
+                "suggestPrice": 1900.65,
+                "unit": "个"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "UPDATE product set audit_status='PASS' where product_code in ('${新建商品}[resp][json][result]','${新建商品1}[resp][json][result]')"
+            ]
+          },
+          {
+            "name": "新建促销活动",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/promote_sales",
+              "data": null,
+              "req_json": {
+                "productCodes": [
+                  "${新建商品}[resp][json][result]",
+                  "${新建商品1}[resp][json][result]"
+                ],
+                "purchaserCode": "pur5005",
+                "remark": "${11位随机串}",
+                "saleEndTime": "2020-12-17 17:30:00",
+                "saleName": "万圣节大促",
+                "saleRuleCode": "WSJ09998",
+                "saleStartTime": "2020-12-15 17:30:00",
+                "supplierCode": "g5009"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "查询促销活动列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/promote_sales/items?pageNo=1&pageSize=1",
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "根据code查询促销活动商品列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/promote_sales/products?",
+              "params": {
+                "saleCode": "${查询促销活动列表}[resp][json][result][records][0][saleCode]"
+              },
+              "req_json": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "查询促销活动列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/promote_sales/purchase/items",
+              "params": {
+                "productCode": "${新建商品}[resp][json][result]"
+              },
+              "req_json": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

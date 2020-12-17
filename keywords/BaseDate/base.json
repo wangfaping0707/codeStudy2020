@@ -1,0 +1,1246 @@
+[
+  {
+    "name": "keywords-bat-import-base-data",
+    "keywords": [
+      {
+        "name": "keywords-delete-tax",
+        "doc": "删除指定租户下税盘",
+        "args": [
+          "${tokens}",
+          "${tenantId}"
+        ],
+        "steps": [
+          {
+            "name": "查询税盘信息",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/xfp-maintenance/taxware/configTerminal/getTerminalList?useLoginAuth=false",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "terminalInfo": {
+                  "companyInfo": {
+                    "tenantId": "${tenantId}"
+                  },
+                  "terminalUns": [],
+                  "terminalType": ""
+                },
+                "pageInfo": {
+                  "pageNo": 1,
+                  "pageSize": 1
+                },
+                "sortInfo": {
+                  "createTime": "DESC"
+                }
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "停用税盘信息",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/xfp-maintenance/taxware/configTerminal/updateStatus",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "terminalUns": [
+                  "${查询税盘信息}[resp][json][result][terminals][0]"
+                ],
+                "status": 12
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "关闭税盘信息",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/xfp-maintenance/taxware/configTerminal/updateStatus",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "terminalUns": [
+                  "${查询税盘信息}[resp][json][result][terminals][0]"
+                ],
+                "status": 21
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "删除税盘信息",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/xfp-maintenance/taxware/configTerminal/updateStatus",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "terminalUns": [
+                  "${查询税盘信息}[resp][json][result][terminals][0]"
+                ],
+                "status": 22
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords_root_orgs",
+        "doc": "创建根组织",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${orgCode}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "DELETE from sys_org_user_rel where org_struct_id in (select org_struct_id from sys_org_struct where tenant_id='${tenantId}') ",
+              "DELETE from sys_org_companyno where org_struct_id in (select org_struct_id from sys_org_struct where tenant_id='${tenantId}')",
+              "DELETE from org_extension where org_struct_id in (select org_struct_id from sys_org_struct where tenant_id='${tenantId}')",
+              "DELETE from sys_org_struct where tenant_id='${tenantId}'"
+            ]
+          },
+          {
+            "name": "organization-create",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "orgCode": "${orgCode}",
+                "orgDesc": "${orgCode}",
+                "orgName": "${orgCode}",
+                "orgType": "0",
+                "status": "1",
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-organization-company",
+        "doc": "创建组织同时创建公司",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${orgCode}",
+          "${orgDesc}",
+          "${orgName}",
+          "${orgType}",
+          "${status}",
+          "${parentCode}",
+          "${withApplication}",
+          "${companyName}",
+          "${taxNum}",
+          "${bankArea}",
+          "${companyPhone}",
+          "${inspectionServiceFlag}",
+          "${speedInspectionChannelFlag}",
+          "${traditionAuthenFlag}",
+          "${seQuota}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_org_user_rel where org_struct_id in (select org_struct_id from sys_org_struct where org_code in ('${orgCode}') or org_name in ('${orgName}'))",
+              "delete from org_extension where org_struct_id in (select org_struct_id from sys_org_struct where org_code in ('${orgCode}') or org_name in ('${orgName}'))",
+              "delete from sys_org_companyno where org_struct_id in (select org_struct_id from sys_org_struct where org_code in ('${orgCode}') or org_name in ('${orgName}'))",
+              "delete from bss_tenant_company_rel where company_id in (select company_id from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}'))",
+              "delete from bss_company_service_rel where company_id in (select company_id from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}'))",
+              "delete from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}')",
+              "delete from bss_company_apply where tax_num in ('${taxNum}') or company_name in ('${companyName}')",
+              "delete from sys_org_struct where org_code in ('${orgCode}') or org_name in ('${orgName}')"
+
+            ]
+          },
+          {
+            "name": "organization-create",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "orgCode": "${orgCode}",
+                "orgDesc": "${orgDesc}",
+                "orgName": "${orgName}",
+                "orgType": "${orgType}",
+                "status": "${status}",
+                "tenantId": "${tenantId}",
+                "withApplication": "${withApplication}",
+                "company": {
+                  "companyName": "${companyName}",
+                  "taxNum": "${taxNum}",
+                  "bankArea": "${bankArea}",
+                  "companyPhone": "${companyPhone}",
+                  "inspectionServiceFlag": "${inspectionServiceFlag}",
+                  "speedInspectionChannelFlag": "${speedInspectionChannelFlag}",
+                  "traditionAuthenFlag": "${traditionAuthenFlag}",
+                  "seQuota": "${seQuota}"
+                }
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-organization-company1",
+        "doc": "创建组织同时创建公司",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${orgCode}",
+          "${orgDesc}",
+          "${orgName}",
+          "${orgType}",
+          "${status}",
+          "${parentCode}",
+          "${withApplication}",
+          "${companyName}",
+          "${taxNum}",
+          "${bankArea}",
+          "${companyPhone}",
+          "${inspectionServiceFlag}",
+          "${speedInspectionChannelFlag}",
+          "${traditionAuthenFlag}",
+          "${seQuota}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_org_user_rel where org_struct_id in (select org_struct_id from sys_org_struct where org_code in ('${orgCode}') or org_name in ('${orgName}'))",
+              "delete from org_extension where org_struct_id in (select org_struct_id from sys_org_struct where org_code in ('${orgCode}') or org_name in ('${orgName}'))",
+              "delete from sys_org_companyno where org_struct_id in (select org_struct_id from sys_org_struct where org_code in ('${orgCode}') or org_name in ('${orgName}'))",
+              "delete from bss_tenant_company_rel where company_id in (select company_id from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}'))",
+              "delete from bss_company_service_rel where company_id in (select company_id from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}'))",
+              "delete from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}')",
+              "delete from bss_company_apply where tax_num in ('${taxNum}') or company_name in ('${companyName}')",
+              "delete from sys_org_struct where org_code in ('${orgCode}') or org_name in ('${orgName}')"
+            ]
+          },
+          {
+            "name": "organization-create",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "parentCode": "${parentCode}",
+                "orgCode": "${orgCode}",
+                "orgDesc": "${orgDesc}",
+                "orgName": "${orgName}",
+                "orgType": "${orgType}",
+                "status": "${status}",
+                "tenantId": "${tenantId}",
+                "withApplication": "${withApplication}",
+                "company": {
+                  "companyName": "${companyName}",
+                  "taxNum": "${taxNum}",
+                  "bankArea": "${bankArea}",
+                  "companyPhone": "${companyPhone}",
+                  "inspectionServiceFlag": "${inspectionServiceFlag}",
+                  "speedInspectionChannelFlag": "${speedInspectionChannelFlag}",
+                  "traditionAuthenFlag": "${traditionAuthenFlag}",
+                  "seQuota": "${seQuota}"
+                }
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-user-email",
+        "doc": "创建邮箱帐号",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${email}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_org_user_rel where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where email='${email}'))",
+              "delete from sys_role_user_rel where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where email='${email}'))",
+              "delete from sys_user_tag where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where email='${email}'))",
+              "delete from sys_user where account_id in (select account_id from sys_sass_account where email='${email}')",
+              "delete from sys_sass_account where email='${email}'"
+            ]
+          },
+          {
+            "name": "创建邮箱帐号",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "account": {
+                  "email": "${email}",
+                  "password": "Ab123456",
+                  "status": 1,
+                  "type": "PHONE_EMAIL"
+                },
+                "isAppOverwrite": false,
+                "isMergeAccount": false,
+                "isOrgOverwrite": false,
+                "isOverwrite": false,
+                "isRoleOverwrite": false,
+                "isStrict": false,
+                "isTagOverwrite": false,
+                "status": 1,
+                "tenantId": "${tenantId}",
+                "type": "PHONE_EMAIL",
+                "userEmailAddr": "${email}",
+                "userName": "${email}",
+                "userType": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-user-telPhone",
+        "doc": "创建手机帐号",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${telPhone}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_org_user_rel where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where tel_phone='${telPhone}'))",
+              "delete from sys_role_user_rel where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where tel_phone='${telPhone}'))",
+              "delete from sys_user_tag where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where tel_phone='${telPhone}'))",
+              "delete from sys_user where account_id in (select account_id from sys_sass_account where tel_phone='${telPhone}')",
+              "delete from sys_sass_account where tel_phone='${telPhone}'"
+            ]
+          },
+          {
+            "name": "创建电话帐号",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "account": {
+                  "telPhone": "${telPhone}",
+                  "password": "Ab123456",
+                  "status": 1,
+                  "type": "PHONE_EMAIL"
+                },
+                "isAppOverwrite": false,
+                "isMergeAccount": false,
+                "isOrgOverwrite": false,
+                "isOverwrite": false,
+                "isRoleOverwrite": false,
+                "isStrict": false,
+                "isTagOverwrite": false,
+                "status": 1,
+                "tenantId": "${tenantId}",
+                "type": "PHONE_EMAIL",
+                "userEmailAddr": "${telPhone}",
+                "userName": "${telPhone}",
+                "userType": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-user-other",
+        "doc": "创建域帐号帐号",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${username}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_org_user_rel where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where username like '%${username}'or tel_phone like '%${username}'))",
+              "delete from sys_role_user_rel where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where username like '%${username}'or tel_phone like '%${username}'))",
+              "delete from sys_user_tag where user_id in (Select user_id from sys_user where account_id in (select account_id from sys_sass_account where username like '%${username}'or tel_phone like '%${username}'))",
+              "delete from sys_user where account_id in (select account_id from sys_sass_account where username like '%${username}')",
+              "delete from sys_sass_account where username like '%${username}'or tel_phone like '%${username}'"
+            ]
+          },
+          {
+            "name": "创建域帐号",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "account": {
+                  "username": "${username}",
+                  "password": "Ab123456",
+                  "status": 1,
+                  "type": "OTHER"
+                },
+                "isAppOverwrite": false,
+                "isMergeAccount": false,
+                "isOrgOverwrite": false,
+                "isOverwrite": false,
+                "isRoleOverwrite": false,
+                "isStrict": false,
+                "isTagOverwrite": false,
+                "status": 1,
+                "tenantId": "${tenantId}",
+                "type": "OTHER",
+                "userEmailAddr": "${username}",
+                "userName": "${username}",
+                "userType": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-company",
+        "doc": "在租户下建公司",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${companyName}",
+          "${taxNum}",
+          "${bankArea}",
+          "${companyPhone}",
+          "${inspectionServiceFlag}",
+          "${speedInspectionChannelFlag}",
+          "${traditionAuthenFlag}",
+          "${seQuota}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from bss_tenant_company_rel where company_id in (select company_id from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}'))",
+              "delete from bss_company_service_rel where company_id in (select company_id from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}'))",
+              "delete from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}')",
+              "delete from bss_company_apply where tax_num in ('${taxNum}') or company_name in ('${companyName}')",
+              "delete from sys_org_struct where company_id in (select company_id from bss_company where tax_num in ('${taxNum}') or company_name in ('${companyName}'))"
+            ]
+          },
+          {
+            "name": "租户下建公司",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/companies",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "companyName": "${companyName}",
+                "taxNum": "${taxNum}",
+                "bankArea": "${bankArea}",
+                "companyPhone": "${companyPhone}",
+                "inspectionServiceFlag": "${inspectionServiceFlag}",
+                "speedInspectionChannelFlag": "${speedInspectionChannelFlag}",
+                "traditionAuthenFlag": "${traditionAuthenFlag}",
+                "seQuota": "${seQuota}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-role",
+        "doc": "在租户下新建角色",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${roleCode}",
+          "${roleDesc}",
+          "${roleName}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "DELETE from sys_role_user_rel where role_id in (select role_id from sys_role where role_name='${roleCode}')",
+              "DELETE from sys_role_resourceset_rel where role_id in (select role_id from sys_role where role_name='${roleCode}')",
+              "DELETE from sys_role where role_name='${roleCode}'"
+            ]
+          },
+          {
+            "name": "租户下建角色",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "roleCode": "${roleCode}",
+                "roleDesc": "${roleDesc}",
+                "roleName": "${roleName}",
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-tenants",
+        "doc": "关键字新增租户",
+        "args": [
+          "${tokens}",
+          "${tenantCode}",
+          "${tenantName}",
+          "${tenantDesc}",
+          "${username}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_role_resourceset_rel where role_id in (select role_id from sys_role where tenant_id in (select tenant_id from bss_tenant where tenant_name='${tenantName}'))",
+              "delete from sys_org_user_rel where user_id in (select user_id from sys_user where tenant_id in (select tenant_id from bss_tenant where tenant_name='${tenantName}'))",
+              "delete from sys_role where tenant_id in (select tenant_id from bss_tenant where tenant_name='${tenantName}')",
+              "delete from sys_user where tenant_id in (select tenant_id from bss_tenant where tenant_name='${tenantName}')",
+              "delete from sys_org_struct where tenant_id in (select tenant_id from bss_tenant where tenant_name='${tenantName}')",
+              "delete from sys_role_user_rel where tenant_id in (select tenant_id from bss_tenant where tenant_name='${tenantName}')",
+              "delete from bss_tenant where tenant_name='${tenantName}'"
+            ]
+          },
+          {
+            "name": "新增租户",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/tenants",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "tenantCode": "${tenantCode}",
+                "tenantName": "${tenantName}",
+                "tenantDesc": "${tenantDesc}",
+                "user": {
+                  "account": {
+                    "password": "Ab123456",
+                    "username": "${username}"
+                  }
+                }
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-approve",
+        "doc": "关键字审核公司-通过",
+        "args": [
+          "${tokens}",
+          "${companyName}"
+        ],
+        "steps": [
+          {
+            "name": "查询末审核的企业",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/companies/applications",
+              "params": {
+                "companyName": "${companyName}"
+              },
+              "data": null,
+              "req_json": null,
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          },
+          {
+            "name": "企业审核通过",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${url}/api/global${version}/companies/applications/${查询末审核的企业}[resp][json][result][content][0][companyApplyId]/approve",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-decline",
+        "doc": "关键字审核公司-拒绝",
+        "args": [
+          "${tokens}",
+          "${companyName}"
+        ],
+        "steps": [
+          {
+            "name": "查询末审核的企业",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/companies/applications",
+              "params": {
+                "companyName": "${companyName}"
+              },
+              "data": null,
+              "req_json": null,
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          },
+          {
+            "name": "企业审核拒绝",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${url}/api/global${version}/companies/applications/${查询末审核的企业}[resp][json][result][content][0][companyApplyId]/decline",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-resources",
+        "doc": "新建资源码",
+        "args": [
+          "${tokens}",
+          "${appId}",
+          "${isServicePackage}",
+          "${parentId}",
+          "${resourceCode}",
+          "${resourceName}",
+          "${resourcePlatform}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "DELETE from sys_resourceset_resource_rel where resource_id in (select resource_id from sys_resource where resource_code='${resourceCode}')",
+              "DELETE from sys_resource_api_rel where resource_id in (select resource_id from sys_resource where resource_code='${resourceCode}')",
+              "DELETE from sys_resource where resource_code='${resourceCode}'"
+            ]
+          },
+          {
+            "name": "新建资源码",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "isServicePackage": "${isServicePackage}",
+                "parentId": "${parentId}",
+                "resourceCode": "${resourceCode}",
+                "resourceName": "${resourceName}",
+                "resourcePlatform": "${resourcePlatform}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-resourcesets",
+        "doc": "新建功能集",
+        "args": [
+          "${tokens}",
+          "${appId}",
+          "${resourcesetCode}",
+          "${resourcesetName}",
+          "${isServicePackage}",
+          "${parentId}",
+          "${resourceCode}",
+          "${resourceName}",
+          "${resourcePlatform}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "DELETE from sys_resourceset_resource_rel where resourceset_id in (select resourceset_id from sys_resourceset where resourceset_code='${resourcesetCode}'or resourceset_name='${resourcesetName}')",
+              "DELETE from bss_service_resourceset_rel where resourceset_id in (select resourceset_id from sys_resourceset where resourceset_code='${resourcesetCode}'or resourceset_name='${resourcesetName}')",
+              "DELETE from sys_resourceset where resourceset_code='${resourcesetCode}'or resourceset_name='${resourcesetName}'"
+            ]
+          },
+          {
+            "name": "新建资源码",
+            "keyword": "keywords-resources",
+            "type": "keyword",
+            "params": [
+              "${token['${user1 email}']}",
+              "1",
+              true,
+              0,
+              "resourceCode",
+              "resourceCode",
+              "0"
+            ]
+          },
+          {
+            "name": "新建功能集",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${新建资源码}[resp][json][result][resourceId]"
+                  ]
+                },
+                "resourceId": "${新建资源码}[resp][json][result][resourceId]",
+                "resourcesetCode": "${resourcesetCode}",
+                "resourcesetDesc": "${resourcesetCode}",
+                "resourcesetName": "${resourcesetName}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-packages",
+        "doc": "新建产品服务包",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${appId}",
+          "${resourcesetCode}",
+          "${resourcesetName}",
+          "${isServicePackage}",
+          "${parentId}",
+          "${resourceCode}",
+          "${resourceName}",
+          "${resourcePlatform}",
+          "${servicePackageCode}",
+          "${servicePackageDesc}",
+          "${servicePackageName}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "DELETE from sys_resourceset_resource_rel where resource_id in (select resource_id from sys_resource where resource_code='${resourceCode}')",
+              "DELETE from sys_resource where resource_code='${resourceCode}'",
+              "DELETE from sys_resourceset_resource_rel where resourceset_id in(select resourceset_id from sys_resourceset where resourceset_code like '${resourcesetCode}')",
+              "DELETE from sys_resourceset where resourceset_code like '${resourcesetCode}'",
+              "DELETE from sys_resourceset_resource_rel where resourceset_id in(select resourceset_id from sys_resourceset where resourceset_code like 'resourcesetCode1')",
+              "DELETE from sys_resourceset where resourceset_code like 'resourcesetCode1'",
+              "DELETE from bss_service_resourceset_rel where service_package_id in (select service_package_id from bss_service_package where service_package_code='${servicePackageCode}' or service_package_name='${servicePackageName}')",
+              "DELETE from bss_company_service_rel where service_package_id in (select service_package_id from bss_service_package where service_package_code='${servicePackageCode}' or service_package_name='${servicePackageName}')",
+              "DELETE from bss_service_package where service_package_code='${servicePackageCode}' or service_package_name='${servicePackageName}'"
+            ]
+          },
+          {
+            "name": "新建功能集",
+            "keyword": "keywords-resourcesets",
+            "type": "keyword",
+            "params": [
+              "${token['${user1 email}']}",
+              "1",
+              "${resourcesetCode}",
+              "${resourcesetName}",
+              "true",
+              "0",
+              "${resourceCode}",
+              "${resourceName}",
+              "1"
+            ]
+          },
+          {
+            "name": "建服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${新建功能集}[resp][json][result][resourcesetId]"
+                  ]
+                },
+                "servicePackageCode": "${servicePackageCode}",
+                "servicePackageDesc": "${servicePackageDesc}",
+                "servicePackageName": "${servicePackageName}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-companies-packages",
+        "doc": "公司绑定服务包",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${taxNum}",
+          "${packageIds}",
+          "${overwrite}"
+        ],
+        "steps": [
+          {
+            "name": "新建服务包id列表",
+            "type": "rft",
+            "keyword": "create dictionary",
+            "params": [
+              "packageIds=${packageIds}"
+            ]
+          },
+          {
+            "name": "公司绑定服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/companies/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "overwrite": "${overwrite}",
+                "packageIds": [
+                  "${新建服务包id列表}[packageIds]"
+                ],
+                "taxNum": "${taxNum}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-role_resourceSet",
+        "doc": "在租户下新建角色关联功能集",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${companyId}",
+          "${resourceCode}",
+          "${resourcesetName}",
+          "${servicePackageName}",
+          "${roleCode}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_resource_api_rel where resource_id in (select resource_id from sys_resource where resource_code='${resourceCode}')",
+              "delete from sys_resourceset_resource_rel where resource_id in (select resource_id from sys_resource where resource_code='${resourceCode}')",
+              "delete from sys_resource where resource_code='${resourceCode}';",
+              "delete from sys_resourceset_resource_rel where resourceset_id in (select resourceset_id from sys_resourceset where resourceset_code='${resourcesetName}')",
+              "delete from bss_service_resourceset_rel where resourceset_id in (select resourceset_id from sys_resourceset where resourceset_code='${resourcesetName}')",
+              "delete from sys_resourceset where resourceset_code='${resourcesetName}'",
+              "delete from bss_service_resourceset_rel where service_package_id in (select service_package_id from bss_service_package where service_package_code='${servicePackageName}')",
+              "delete from bss_company_service_rel where service_package_id in (select service_package_id from bss_service_package where service_package_code='${servicePackageName}')",
+              "delete from bss_service_package where service_package_code='${servicePackageName}'",
+              "delete from sys_role_user_rel where role_id in (select role_id from sys_role where role_code='${roleCode}')",
+              "delete from sys_role_resourceset_rel where role_id in (select role_id from sys_role where role_code='${roleCode}')",
+              "delete from sys_role where role_code='${roleCode}'"
+            ]
+          },
+          {
+            "name": "新增资源码",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isServicePackage": true,
+                "parentId": 0,
+                "resourceCode": "${resourceCode}",
+                "resourceName": "${resourceCode}",
+                "resourcePlatform": 0,
+                "resourceType": 0,
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "新建功能集",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${新增资源码}[resp][json][result][resourceId]"
+                  ]
+                },
+                "appId": "1",
+                "resourceId": "${新增资源码}[resp][json][result][resourceId]",
+                "resourcesetDesc": "${resourcesetName}",
+                "resourcesetName": "${resourcesetName}",
+                "resourcesetCode": "${resourcesetName}",
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "新建服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${新建功能集}[resp][json][result][resourcesetId]"
+                  ]
+                },
+                "servicePackageDesc": "${servicePackageName}",
+                "servicePackageName": "${servicePackageName}",
+                "servicePackageCode": "${servicePackageName}",
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "公司绑定服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/companies/${companyId}/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "overwrite": true,
+                "packageIds": [
+                  "${新建服务包}[resp][json][result][servicePackageId]"
+                ]
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "新建角色成功",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "roleCode": "${roleCode}",
+                "roleDesc": "${roleCode}",
+                "roleName": "${roleCode}",
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "角色绑定功能集成功",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/roles/${新建角色成功}[resp][json][result][id]/resource-sets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "overwrite": true,
+                "resourcesetIds": [
+                  "${新建功能集}[resp][json][result][resourcesetId]"
+                ]
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,115 @@
+[
+  {
+    "name": "查询子品类列表",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "查询子品类列表",
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from category where id='9999999'",
+              "INSERT INTO `category`(`id`, `category_code`, `category_name`, `category_level`, `parent_code`, `status`, `remark`, `create_time`, `create_user_id`, `create_user_name`, `update_time`, `update_user_id`, `update_user_name`, `delete_flag`, `delete_by`, `delete_time`) VALUES (9999999, '9999999', '测试数据别删除', 2, '1001', '1', '', '2020-11-29 21:34:33', 0, 'system', '2020-11-29 21:34:33', 0, 'system', '0', '', NULL)"
+            ]
+          },
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询子品类列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/category/sub_categories?",
+              "params": {
+                "categoryCode": "9999999"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

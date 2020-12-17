@@ -1,0 +1,77 @@
+[
+  {
+    "name": "keywords-login-tenant",
+    "keywords": [
+      {
+        "name": "keywords-login-tenant-info",
+        "doc": "login-tenant-info获取",
+        "args": [
+           "${email}",
+           "${password}",
+           "${tokens}"
+        ],
+        "steps": [
+          {
+            "name": "loginTenantInfo",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/accounts/login",
+              "params": {
+                "email": "${email}",
+                "password": "${password}"
+              },
+              "req_json": null,
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "keywords-tenants-info",
+        "doc": "login-tenant-info获取",
+        "args": [
+          "${tokens}",
+          "${tenantId}"
+        ],
+        "steps": [
+          {
+            "name": "tenantsInfo",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/tenants/${tenantId}",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_special_contains": {
+                "code": "1",
+                "message": null,
+                "result": {
+                  "tenantId": "${tenantId}"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

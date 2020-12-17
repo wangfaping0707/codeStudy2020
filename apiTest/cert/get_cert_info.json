@@ -1,0 +1,668 @@
+[
+  {
+    "name": "查询证件简要信息列表",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "certCategory-查询证件简要信息列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "提交证件",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/cert?certType=PRODUCT&certCategory=FOOD&bizNo=${11位随机串}",
+              "req_json": [
+                {
+                  "itemCode": "${11位随机串}",
+                  "itemVal": "${11位随机串}",
+                  "tempId": "${11位随机串}"
+                }
+              ],
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "certCategory查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/cert/infos?",
+              "params": {
+                "certCategory": "FOOD",
+                "pageNo": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "certType": "PRODUCT",
+                      "certCategory": "FOOD"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "certType-查询证件简要信息列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "提交证件",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/cert?certType=PRODUCT&certCategory=FOOD&bizNo=${11位随机串}",
+              "req_json": [
+                {
+                  "itemCode": "${11位随机串}",
+                  "itemVal": "${11位随机串}",
+                  "tempId": "${11位随机串}"
+                }
+              ],
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "certType查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/cert/infos?",
+              "params": {
+                "certType": "PRODUCT",
+                "pageNo": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "certType": "PRODUCT",
+                      "certCategory": "FOOD"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "certNo-查询证件简要信息列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "提交证件",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/cert?certType=PRODUCT&certCategory=FOOD&bizNo=${11位随机串}",
+              "req_json": [
+                {
+                  "itemCode": "${11位随机串}",
+                  "itemVal": "${11位随机串}",
+                  "tempId": "${11位随机串}"
+                }
+              ],
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "certType查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/cert/infos?",
+              "params": {
+                "certType": "PRODUCT",
+                "pageNo": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "certType": "PRODUCT",
+                      "certCategory": "FOOD"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "certNo查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/cert/infos?",
+              "params": {
+                "certNo": "${certType查询}[resp][json][result][records][0][certNo]",
+                "pageNo": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "certNo": "${certType查询}[resp][json][result][records][0][certNo]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "applyStartTime-查询证件简要信息列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "提交证件",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/cert?certType=PRODUCT&certCategory=FOOD&bizNo=${11位随机串}",
+              "req_json": [
+                {
+                  "itemCode": "${11位随机串}",
+                  "itemVal": "${11位随机串}",
+                  "tempId": "${11位随机串}"
+                }
+              ],
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "certType查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/cert/infos?",
+              "params": {
+                "certType": "PRODUCT",
+                "pageNo": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "certType": "PRODUCT",
+                      "certCategory": "FOOD"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "applyStartTime查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/cert/infos?",
+              "params": {
+                "certNo": "${certType查询}[resp][json][result][records][0][certNo]",
+                "applyStartTime": "${certType查询}[resp][json][result][records][0][beginTime]",
+                "pageNo": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "certNo": "${certType查询}[resp][json][result][records][0][certNo]",
+                      "beginTime": "${certType查询}[resp][json][result][records][0][beginTime]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "applyEndTime-查询证件简要信息列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "提交证件",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/cert?certType=PRODUCT&certCategory=FOOD&bizNo=${11位随机串}",
+              "req_json": [
+                {
+                  "itemCode": "${11位随机串}",
+                  "itemVal": "${11位随机串}",
+                  "tempId": "${11位随机串}"
+                }
+              ],
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "certType查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/cert/infos?",
+              "params": {
+                "certType": "PRODUCT",
+                "pageNo": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "certType": "PRODUCT",
+                      "certCategory": "FOOD"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "applyEndTime查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/cert/infos?",
+              "params": {
+                "certNo": "${certType查询}[resp][json][result][records][0][certNo]",
+                "applyEndTime": "${certType查询}[resp][json][result][records][0][endTime]",
+                "pageNo": "1",
+                "pageSize": "1"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "certNo": "${certType查询}[resp][json][result][records][0][certNo]",
+                      "endTime": "${certType查询}[resp][json][result][records][0][endTime]"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

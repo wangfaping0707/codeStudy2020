@@ -1,0 +1,49 @@
+[
+  {
+    "name": "短信验证码登录关键字",
+    "variableFiles": [
+      "测试数据"
+    ],
+    "keywords": [
+      {
+        "name": "获取短信验证码",
+        "args": [
+          "${phone_number}"
+        ],
+        "steps": [
+          {
+            "name": "填写手机号,并获取验证码",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/sms/login/${phone_number}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "登录",
+        "args": [
+          "${phone}",
+          "${code}",
+          "${msgId}"
+        ],
+        "steps": [
+          {
+            "name": "填写手机号，验证码，msgId",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/sms/login",
+              "req_json": {
+                "phone": "${phone}",
+                "smsCode": "${code}",
+                "msgId": "${msgId}"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

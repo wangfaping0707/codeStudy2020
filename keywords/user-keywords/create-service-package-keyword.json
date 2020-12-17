@@ -1,0 +1,161 @@
+[
+  {
+    "name": "创建服务包",
+    "keywords": [
+      {
+        "name": "数据清理",
+        "doc": "单独调用创建服务包的时候，需要先调用数据清理",
+        "args": [
+          "${数据库配置}",
+          "${servicePackageName}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_service_api where service_api_name='serviceApiName' or service_api_path='serviceApiName'",
+              "delete from sys_resource where resource_code='resourceCodeTest' or resource_name ='resourceCodeTest'",
+              "delete from sys_resourceset where resourceset_name='resourcesetName' or resourceset_desc='resourcesetName'",
+              "delete from bss_service_package where service_package_name ='${servicePackageName}' or service_package_desc='${servicePackageName}'"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "创建服务包",
+        "args": [
+          "${url}",
+          "${version}",
+          "${token}",
+          "${servicePackageName}"
+        ],
+        "steps": [
+          {
+            "name": "新建服务API",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/service-apis",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isSkipAuth": 0,
+                "isSkipCheck": 0,
+                "requestMethod": "GET",
+                "routeId": 1,
+                "serviceApiName": "serviceApiName",
+                "serviceApiPath": "serviceApiName",
+                "serviceApiUrl": "http://baidu.com",
+                "status": 0
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          },
+          {
+            "name": "新增资源码",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isServicePackage": true,
+                "parentId": 0,
+                "resourceCode": "resourceCodeTest",
+                "resourceName": "resourceCodeTest",
+                "resourcePlatform": 0,
+                "resourceType": 0,
+                "status": 1
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          },
+          {
+            "name": "api绑定资源码",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/service-apis/${新建服务API}[resp][json][result][serviceApiId]/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "overwrite": true,
+                "resourceIds": [
+                  "${新增资源码}[resp][json][result][resourceId]"
+                ]
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          },
+          {
+            "name": "新建功能集",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${新增资源码}[resp][json][result][resourceId]"
+                  ]
+                },
+                "appId": "1",
+                "resourceId": "${新增资源码}[resp][json][result][resourceId]",
+                "resourcesetDesc": "resourcesetName",
+                "resourcesetName": "resourcesetName",
+                "resourcesetCode": "resourcesetCode",
+                "status": 1
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          },
+          {
+            "name": "设置global变量",
+            "type": "rft",
+            "keyword": "set global variable",
+            "params": [
+              "${新建功能集}"
+            ]
+          },
+          {
+            "name": "新建服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${新建功能集}[resp][json][result][resourcesetId]"
+                  ]
+                },
+                "servicePackageDesc": "${servicePackageName}",
+                "servicePackageName": "${servicePackageName}",
+                "servicePackageCode": "${servicePackageName}",
+                "status": 1
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

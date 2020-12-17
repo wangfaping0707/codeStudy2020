@@ -1,0 +1,44 @@
+[
+  {
+    "name": "keywords-resources",
+    "doc": "资源码关键字",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-resource",
+        "doc": "创建资源码",
+        "args": [
+          "${appId}"
+        ],
+        "steps": [
+          {
+            "name": "uuid",
+            "doc": "获取uuid",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "create-resource",
+            "doc": "新建资源码",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "req_json": {
+                "appId": "${appId}",
+                "isServicePackage": true,
+                "resourceCode": "${uuid}",
+                "resourceName": "${uuid}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

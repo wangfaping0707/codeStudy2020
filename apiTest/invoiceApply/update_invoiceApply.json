@@ -1,0 +1,181 @@
+[
+  {
+    "name": "修改开票申请",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "正向修改开票申请",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "5位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "新增开票申请",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${eccp}/api/eccp/v1/invoice/apply",
+              "data": null,
+              "req_json": {
+                "amount": 753520.965699,
+                "invoiceType": "1",
+                "purchaserCode": "pur5005",
+                "remark": "${11位随机串}",
+                "supplierCode": "g965054"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查开票表主信息",
+            "type": "mysql",
+            "input": {
+              "sql": "SELECT * from apply_invoice where remark='${11位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "修改开票申请",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/invoice/apply",
+              "data": null,
+              "req_json": {
+                "amount": 112121.1,
+                "applyNo": "${检查开票表主信息}[0][apply_no]",
+                "id": "${检查开票表主信息}[0][id]",
+                "invoiceType": "1",
+                "purchaserCode": "pur5005",
+                "remark": "${5位随机串}",
+                "supplierCode": "g965054"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查审核表信息",
+            "type": "mysql",
+            "input": {
+              "sql": "SELECT * from apply_invoice where remark='${5位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查审核表信息}",
+              "${1}"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

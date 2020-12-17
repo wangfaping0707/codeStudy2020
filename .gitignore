@@ -1,0 +1,7 @@
+**/.idea
+**/cloudtest-output
+**/**.html
+**/**.xml
+*.html
+*.xml
+/*.log

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "tenant关键字",
+    "keywords": [
+      {
+        "name": "get tenantId",
+        "args": [
+          "${请求token}",
+          "${请求url}",
+          "${email}",
+          "${password}"
+        ],
+        "steps": [
+          {
+            "name": "请求获取tenantId",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${请求url}",
+              "params": {
+                "email": "${email}",
+                "password": "${password}"
+              },
+              "req_headers": "${请求token}"
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          },
+          {
+            "name": "得到tenantId",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "${请求获取tenantId}[resp][json][result][tenantId]"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

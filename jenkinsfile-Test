@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    environment{
+        jenkinsUrl = 'http://jks.xforceplus.com/'
+    }
+    stages {
+        stage('SHELL'){
+            environment {
+                PACKAGE_PATH = "${env.JENKINS_HOME}/jobs/${env.JOB_NAME}/builds/${env.BUILD_NUMBER}/package"
+                PYTHONPATH = "${env.PACKAGE_PATH}:${env.PYTHONPATH}"
+            }
+            steps {
+                script{
+                    sh 'mkdir -p $JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_NUMBER/package'
+                    sh 'mkdir -p $WORKSPACE/output'
+                    sh 'python3.7 -m pip install -i http://114.55.251.46:8081/repository/pypi/simple/ --extra-index-url https://mirrors.aliyun.com/pypi/simple/ --trusted-host 114.55.251.46 --target $JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_NUMBER/package -r requirement.txt'
+                    sh '$PACKAGE_PATH/bin/xfct -f keywords::variables/variables-fat.json::cases'
+                    sh 'ls $JENKINS_HOME/jobs/$JOB_NAME/builds/$BUILD_NUMBER/'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script{
+                robot outputPath: '', passThreshold: 100.0, unstableThreshold: 99.0
+            }
+        }
+
+    }
+}

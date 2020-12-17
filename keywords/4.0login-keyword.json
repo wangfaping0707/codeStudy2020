@@ -1,0 +1,284 @@
+[
+  {
+    "name": "4.0的token",
+    "keywords": [
+      {
+        "name": "获取4.0登录token",
+        "doc": "4.0登录，针对于多用户存储${token}全局变量，${token}里存字典，key是username,value是4.0登录的token信息",
+        "args": [
+          "${login_url}",
+          "${username}",
+          "${password}"
+        ],
+        "steps": [
+          {
+            "name": "登录",
+            "type": "python",
+            "path": "atApiXforce4Login/xforce4login.py",
+            "keyword": "at_xforce4_login",
+            "params": [
+              "${login_url}",
+              "${username}",
+              "${password}"
+            ]
+          },
+          {
+            "name": "用户token",
+            "type": "rft",
+            "keyword": "create dictionary",
+            "params": [
+              "${username}",
+              "${登录}"
+            ]
+          },
+          {
+            "name": "验证token是否存在",
+            "type": "rft",
+            "keyword": "run keyword and continue on failure",
+            "params": [
+              "get variable value",
+              "${token}"
+            ]
+          },
+          {
+            "name": "设置global变量",
+            "type": "rft",
+            "keyword": "run keyword unless",
+            "params": [
+              "${验证token是否存在}",
+              "set global variable",
+              "${token}",
+              "${用户token}"
+            ]
+          },
+          {
+            "name": "获取token变量",
+            "type": "rft",
+            "keyword": "run keyword if",
+            "params": [
+              "${验证token是否存在}",
+              "get variable value",
+              "${token}"
+            ]
+          },
+          {
+            "name": "更新token",
+            "type": "rft",
+            "keyword": "run keyword if",
+            "params": [
+              "${验证token是否存在}",
+              "set to dictionary",
+              "${token}",
+              "${username}",
+              "${登录}"
+            ]
+          },
+          {
+            "name": "设置global变量",
+            "type": "rft",
+            "keyword": "run keyword if",
+            "params": [
+              "${验证token是否存在}",
+              "set global variable",
+              "${token}"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "获取token",
+        "args": [
+          "${login_url}",
+          "${username}",
+          "${password}"
+        ],
+        "steps": [
+          {
+            "name": "验证token是否存在",
+            "type": "rft",
+            "keyword": "run keyword and continue on failure",
+            "params": [
+              "get variable value",
+              "${token}"
+            ]
+          },
+          {
+            "name": "如果token不存在登录",
+            "type": "rft",
+            "keyword": "run keyword unless",
+            "params": [
+              "${验证token是否存在}",
+              "获取4.0登录token",
+              "${login_url}",
+              "${username}",
+              "${password}"
+            ]
+          },
+          {
+            "name": "如果token存在,验证username是否存在",
+            "type": "rft",
+            "keyword": "run keyword if",
+            "params": [
+              "${验证token是否存在}",
+              "evaluate",
+              "'${username}' in ${token}"
+            ]
+          },
+          {
+            "name": "如果token里的用户不存在就登录",
+            "type": "rft",
+            "keyword": "run keyword unless",
+            "params": [
+              "${如果token存在,验证username是否存在}",
+              "获取4.0登录token",
+              "${login_url}",
+              "${username}",
+              "${password}"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "4.0的token1",
+    "keywords": [
+      {
+        "name": "获取4.0登录token",
+        "doc": "4.0登录，针对于多用户存储${token}全局变量，${token}里存字典，key是username,value是4.0登录的token信息",
+        "args": [
+          "${login_url}",
+          "${username}",
+          "${password}"
+        ],
+        "steps": [
+          {
+            "name": "登录",
+            "type": "python",
+            "path": "xforce4login2.py",
+            "keyword": "at_xforce4_login2",
+            "params": [
+              "${login_url}",
+              "${username}",
+              "${password}"
+            ]
+          },
+          {
+            "name": "用户token",
+            "type": "rft",
+            "keyword": "create dictionary",
+            "params": [
+              "${username}",
+              "${登录}"
+            ]
+          },
+          {
+            "name": "验证token是否存在",
+            "type": "rft",
+            "keyword": "run keyword and continue on failure",
+            "params": [
+              "get variable value",
+              "${token}"
+            ]
+          },
+          {
+            "name": "设置global变量",
+            "type": "rft",
+            "keyword": "run keyword unless",
+            "params": [
+              "${验证token是否存在}",
+              "set global variable",
+              "${token}",
+              "${用户token}"
+            ]
+          },
+          {
+            "name": "获取token变量",
+            "type": "rft",
+            "keyword": "run keyword if",
+            "params": [
+              "${验证token是否存在}",
+              "get variable value",
+              "${token}"
+            ]
+          },
+          {
+            "name": "更新token",
+            "type": "rft",
+            "keyword": "run keyword if",
+            "params": [
+              "${验证token是否存在}",
+              "set to dictionary",
+              "${token}",
+              "${username}",
+              "${登录}"
+            ]
+          },
+          {
+            "name": "设置global变量",
+            "type": "rft",
+            "keyword": "run keyword if",
+            "params": [
+              "${验证token是否存在}",
+              "set global variable",
+              "${token}"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "获取token2",
+        "args": [
+          "${login_url}",
+          "${username}",
+          "${password}"
+        ],
+        "steps": [
+          {
+            "name": "验证token是否存在",
+            "type": "rft",
+            "keyword": "run keyword and continue on failure",
+            "params": [
+              "get variable value",
+              "${token}"
+            ]
+          },
+          {
+            "name": "如果token不存在登录",
+            "type": "rft",
+            "keyword": "run keyword unless",
+            "params": [
+              "${验证token是否存在}",
+              "获取4.0登录token",
+              "${login_url}",
+              "${username}",
+              "${password}"
+            ]
+          },
+          {
+            "name": "如果token存在,验证username是否存在",
+            "type": "rft",
+            "keyword": "run keyword if",
+            "params": [
+              "${验证token是否存在}",
+              "evaluate",
+              "'${username}' in ${token}"
+            ]
+          },
+          {
+            "name": "如果token里的用户不存在就登录",
+            "type": "rft",
+            "keyword": "run keyword unless",
+            "params": [
+              "${如果token存在,验证username是否存在}",
+              "获取4.0登录token",
+              "${login_url}",
+              "${username}",
+              "${password}"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

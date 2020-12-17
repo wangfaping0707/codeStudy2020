@@ -1,0 +1,240 @@
+[
+  {
+    "name": "Role全流程测试",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "tenant关键字"
+    ],
+    "suiteSetup": {
+      "keyword": "获取token",
+      "params": [
+        "${login_url}",
+        "${user1 email}",
+        "${user1 password}"
+      ]
+    },
+    "case": [
+      {
+        "name": "Role全流程测试用例",
+        "steps": [
+          {
+            "name": "tenantId",
+            "type": "keyword",
+            "keyword": "get tenantId",
+            "params": [
+              "${token['${user1 email}']}",
+              "${url}/api/global${version}/accounts/login",
+              "${user1 email}",
+              "${user1 password}"
+            ]
+          },
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_role where role_code='SmokeTest_Role_roleCode' and role_name='SmokeTest_Role_roleName'",
+              "delete from sys_role where role_code='SmokeTest_Role_roleCode update' and role_name='SmokeTest_Role_roleName update'"
+            ]
+          },
+          {
+            "name": "新建角色",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/roles",
+              "req_json": {
+                "roleCode": "SmokeTest_Role_roleCode",
+                "roleDesc": "SmokeTest_Role_roleDesc",
+                "roleName": "SmokeTest_Role_roleName",
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "code": "1",
+                "result": {
+                  "tenantId": "${tenantId}",
+                  "code": "SmokeTest_Role_roleCode",
+                  "name": "SmokeTest_Role_roleName",
+                  "roleDesc": "SmokeTest_Role_roleDesc",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "查询新建的角色",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/roles/${新建角色}[resp][json][result][id]",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "code": "1",
+                "result": {
+                  "id": "${新建角色}[resp][json][result][id]",
+                  "tenantId": "${tenantId}",
+                  "code": "SmokeTest_Role_roleCode",
+                  "name": "SmokeTest_Role_roleName",
+                  "roleDesc": "SmokeTest_Role_roleDesc",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "新建的角色更新状态",
+            "type": "http",
+            "input": {
+              "method": "PATCH",
+              "url": "${url}/api/global${version}/roles/${新建角色}[resp][json][result][id]/status/0",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json": {
+                "code": "1",
+                "message": null,
+                "result": "更新成功"
+              }
+            }
+          },
+          {
+            "name": "新建的角色更新属性",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${url}/api/global${version}/roles/${新建角色}[resp][json][result][id]",
+              "req_json": {
+                "roleCode": "SmokeTest_Role_roleCode update",
+                "roleDesc": "SmokeTest_Role_roleDesc update",
+                "roleName": "SmokeTest_Role_roleName update",
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "code": "1",
+                "result": {
+                  "tenantId": "${tenantId}",
+                  "code": "SmokeTest_Role_roleCode update",
+                  "name": "SmokeTest_Role_roleName update",
+                  "roleDesc": "SmokeTest_Role_roleDesc update",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "查询新建的角色2-被修改",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/roles/${新建角色}[resp][json][result][id]",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "code": "1",
+                "result": {
+                  "id": "${新建角色}[resp][json][result][id]",
+                  "tenantId": "${tenantId}",
+                  "code": "SmokeTest_Role_roleCode update",
+                  "name": "SmokeTest_Role_roleName update",
+                  "roleDesc": "SmokeTest_Role_roleDesc update",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "查询新建的角色list",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/roles",
+              "params": {
+                "roleCode": "SmokeTest_Role_roleCode update"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "result": {
+                  "content": [
+                    {
+                      "id": "${新建角色}[resp][json][result][id]",
+                      "tenantId": "${tenantId}",
+                      "code": "SmokeTest_Role_roleCode update",
+                      "name": "SmokeTest_Role_roleName update",
+                      "roleDesc": "SmokeTest_Role_roleDesc update",
+                      "status": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "查询新建的角色的user list",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/roles/${新建角色}[resp][json][result][id]/users",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "code": "1",
+                "message": null
+              }
+            }
+          },
+          {
+            "name": "删除新建的角色",
+            "type": "http",
+            "input": {
+              "method": "DELETE",
+              "url": "${url}/api/global${version}/roles/${新建角色}[resp][json][result][id]",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json": {
+                "code": "1",
+                "message": null,
+                "result": "删除成功"
+              }
+            }
+          },
+          {
+            "name": "查询新建的角色3-不存在",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/roles/${新建角色}[resp][json][result][id]",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 400
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

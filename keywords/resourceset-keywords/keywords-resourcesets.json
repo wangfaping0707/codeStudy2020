@@ -1,0 +1,51 @@
+[
+  {
+    "name": "keywords-resourcesets",
+    "doc": "功能集关键字",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-resourceset",
+        "doc": "创建功能集",
+        "args": [
+          "${appId}",
+          "${resourceId}"
+        ],
+        "steps": [
+          {
+            "name": "uuid",
+            "doc": "获取uuid",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "create-resourceset",
+            "doc": "新建功能集",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "req_json": {
+                "appId": "${appId}",
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${resourceId}"
+                  ]
+                },
+                "resourcesetCode": "${uuid}",
+                "resourcesetDesc": "${uuid}",
+                "resourcesetName": "${uuid}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

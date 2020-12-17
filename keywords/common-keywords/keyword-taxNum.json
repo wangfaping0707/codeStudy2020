@@ -1,0 +1,22 @@
+[
+  {
+    "name": "keywords-taxNum",
+    "keywords": [
+      {
+        "name": "kw-taxNum",
+        "doc": "创建随机的taxNum的keyword",
+        "steps": [
+          {
+            "name": "taxNum",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "'9999999999999' + str(random.randint(10000, 99999))",
+              "modules=random"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

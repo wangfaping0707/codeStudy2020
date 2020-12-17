@@ -1,0 +1,50 @@
+[
+  {
+    "name": "keywords-organization",
+    "keywords": [
+      {
+        "name": "keywords-organization-create",
+        "doc": "login-tenant-info获取",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${orgCode}",
+          "${orgDesc}",
+          "${orgName}",
+          "${orgType}",
+          "${status}"
+        ],
+        "steps": [
+          {
+            "name": "organization-create",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "orgCode": "${orgCode}",
+                "orgDesc": "${orgDesc}",
+                "orgName": "${orgName}",
+                "orgType": "${orgType}",
+                "status": "${status}",
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

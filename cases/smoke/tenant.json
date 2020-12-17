@@ -1,0 +1,2212 @@
+[
+  {
+    "name": "全流程测试",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据"
+    ],
+    "case": [
+      {
+        "name": "新建租户",
+        "steps": [
+          {
+            "name": "取token",
+            "type": "keyword",
+            "keyword": "获取token",
+            "params": [
+              "${login_url}",
+              "${user1 email}",
+              "${user1 password}"
+            ]
+          },
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_resourceset where app_id not in (select app_id from bss_app)",
+              "delete from sys_org_struct where tenant_id not in (select tenant_id from bss_tenant)",
+              "delete from sys_org_user_rel where user_id not in (select user_id from sys_user)",
+              "delete from sys_org_user_rel where tenant_id not in (select tenant_id from bss_tenant)",
+              "delete from sys_user where tenant_id not in (select tenant_id from bss_tenant)",
+              "delete from sys_user where account_id not in (select account_id from sys_sass_account)",
+              "delete from bss_tenant_secret where tenant_id not in (select tenant_id from bss_tenant)",
+              "delete from sys_role where tenant_id not in (select tenant_id from bss_tenant) and tenant_id >0",
+              "delete from sys_role_resourceset_rel where role_id not in (select role_id from sys_role)",
+              "delete from sys_role_resourceset_rel where resouseset_id not in (select resourceset_id from sys_resourceset)",
+              "delete from sys_resourceset_resource_rel where resourceset_id not in (select resourceset_id from sys_resourceset)",
+              "delete from sys_resourceset_resource_rel where resource_id not in (select resource_id from sys_resource)",
+              "delete from bss_service_resourceset_rel where service_package_id not in (select service_package_id from bss_service_package)",
+              "delete from bss_service_resourceset_rel where resourceset_id not in (select resourceset_id from sys_resourceset)",
+              "delete from sys_resource_api_rel where resource_id not in (select resource_id from sys_resource)",
+              "delete from sys_resource_api_rel where service_api_id not in (select service_api_id from sys_service_api)",
+              "delete from sys_role_resourceset_rel where role_id not in (select role_id from sys_role)",
+              "delete from sys_role_resourceset_rel where resouseset_id not in (select resourceset_id from sys_resourceset)",
+              "delete from bss_service_resourceset_rel where resourceset_id not in (select resourceset_id from sys_resourceset)",
+              "delete from sys_role where role_code='Test_RoleList_roleCode' OR role_name='Test_RoleList_roleName'",
+              "delete from sys_role where role_code='Test_RoleList_roleCode1' OR role_name='Test_RoleList_roleName2'",
+              "delete from sys_role where role_code='Test_RoleList_roleCode2' OR role_name='Test_RoleList_roleName2'",
+              "delete from sys_user where user_code='${user4}'",
+              "delete from bss_company where company_code='${companyCode3}' or company_name='${companyName3}' or tax_num='${taxNum3}'",
+              "delete from bss_company where company_code='${companyCode2}' or company_name='${companyName2}' or tax_num='${taxNum2}'",
+              "delete from bss_company where company_code='${companyCode}' or company_name='${companyName}' or tax_num='${taxNum}'",
+              "delete from sys_sass_account where email='${user2 email}' or tel_phone='${user2 telphone}' or tel_phone='${user2}'",
+              "delete from sys_sass_account where email='${user4 email}' or tel_phone='${user4 telphone}' or tel_phone='${user4}'",
+              "delete from bss_tenant where tenant_code='${tenantCode}' or tenant_name='${tenantName}'",
+              "delete from bss_tenant where tenant_code='${tenantCode1}' or tenant_name='${tenantName1}'",
+              "delete from bss_company where tax_num='${taxNum}' or company_name='${companyName}' or company_code='${companyCode}'",
+              "delete from sys_resource where resource_code='resourceCodeTest' or resource_name ='resourceCodeTest'",
+              "delete from sys_resource where resource_code='resourceCodeTest1' or resource_name ='resourceCodeTest1'",
+              "delete from sys_resourceset where resourceset_name='resourcesetName' or resourceset_desc='resourcesetName'",
+              "delete from sys_resourceset where resourceset_name='resourcesetName1' or resourceset_desc='resourcesetName1'",
+              "delete from sys_service_api where service_api_name='serviceApiName' or service_api_path='serviceApiName'",
+              "delete from sys_service_api where service_api_name='serviceApiName1' or service_api_path='serviceApiName1'",
+              "delete from sys_role where role_code='roleCode' or role_name='roleCode'",
+              "delete from bss_service_package where service_package_name ='${servicePackageName}' or service_package_desc='${servicePackageName}'",
+              "delete from bss_service_package where service_package_name ='${servicePackageName1}' or service_package_desc='${servicePackageName1}'",
+              "delete from sys_org_struct where org_code='${orgcode}' or org_name='${orgname}' or org_desc='${orgdesc}'",
+              "delete from sys_org_struct where org_code='${orgcode1}' or org_name='${orgname1}' or org_desc='${orgdesc1}'",
+              "delete from sys_org_struct where org_code='${orgcode2}' or org_name='${orgname2}' or org_desc='${orgdesc2}'",
+              "delete from sys_org_struct where org_code='${orgcode3}' or org_name='${orgname3}' or org_desc='${orgdesc3}'",
+              "delete from bss_app where app_name='${appName}'",
+              "delete from bss_app where app_name='${appName1}'",
+              "delete from sys_user where account_id in (select account_id from sys_sass_account where email='${user2-2 email}' or tel_phone='${user2-2 telphone}')",
+              "delete from sys_sass_account where email='${user2-2 email}' or tel_phone='${user2-2 telphone}'",
+              "delete from sys_user where account_id in (select account_id from sys_sass_account where email='${user2 email}' or tel_phone='${user2 telphone}')",
+              "delete from sys_sass_account where email='${user2 email}' or tel_phone='${user2 telphone}'",
+              "delete from sys_user where user_phone='${user2 telphone}' or user_email_addr='${user2 email}' or user_name='${user2-2}'",
+              "delete from sys_user where user_phone='${user2-2 telphone}'",
+              "delete from sys_user where user_phone='${user2-2 telphone}'",
+              "delete from sys_resourceset where app_id not in (select app_id from bss_app)",
+              "delete from sys_org_struct where tenant_id not in (select tenant_id from bss_tenant)",
+              "delete from sys_org_user_rel where user_id not in (select user_id from sys_user)",
+              "delete from sys_org_user_rel where tenant_id not in (select tenant_id from bss_tenant)",
+              "delete from sys_user where tenant_id not in (select tenant_id from bss_tenant)",
+              "delete from sys_user where account_id not in (select account_id from sys_sass_account)",
+              "delete from bss_tenant_secret where tenant_id not in (select tenant_id from bss_tenant)",
+              "delete from sys_role where tenant_id not in (select tenant_id from bss_tenant) and tenant_id >0",
+              "delete from sys_role_resourceset_rel where role_id not in (select role_id from sys_role)",
+              "delete from sys_role_resourceset_rel where resouseset_id not in (select resourceset_id from sys_resourceset)",
+              "delete from sys_resourceset_resource_rel where resourceset_id not in (select resourceset_id from sys_resourceset)",
+              "delete from sys_resourceset_resource_rel where resource_id not in (select resource_id from sys_resource)",
+              "delete from bss_service_resourceset_rel where service_package_id not in (select service_package_id from bss_service_package)",
+              "delete from bss_service_resourceset_rel where resourceset_id not in (select resourceset_id from sys_resourceset)",
+              "delete from sys_resource_api_rel where resource_id not in (select resource_id from sys_resource)",
+              "delete from sys_resource_api_rel where service_api_id not in (select service_api_id from sys_service_api)",
+              "delete from sys_role_user_rel where role_id not in (select role_id from sys_role)",
+              "delete from sys_role_user_rel where user_id not in (select user_id from sys_user)",
+              "delete from sys_sass_account where account_id not in (select account_id from sys_user)",
+              "delete from sys_user_tag where user_id not in (select user_id from sys_user)",
+              "delete FROM `bss_company_service_rel` where company_id is null"
+            ]
+          },
+          {
+            "name": "新建租户",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/tenants",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "company": {
+                  "companyName": "${companyName2}",
+                  "taxNum": "${taxNum2}"
+                },
+                "status": 1,
+                "tenantCode": "${tenantCode}",
+                "tenantDesc": "${tenantName}",
+                "tenantName": "${tenantName}",
+                "user": {
+                  "account": {
+                    "email": "${user2 email}",
+                    "password": "Ab123456",
+                    "status": 1,
+                    "telPhone": "${user2 telphone}",
+                    "username": "${user2 telphone}"
+                  },
+                  "userCode": "userCode",
+                  "userEmailAddr": "${user2 email}",
+                  "userName": "${user2 telphone}",
+                  "userNumber": "${user2 telphone}",
+                  "userPhone": "${user2 telphone}",
+                  "userType": 1
+                }
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "tenant": {
+                    "tenantName": "${tenantName}",
+                    "tenantCode": "${tenantCode}",
+                    "tenantDesc": "${tenantName}",
+                    "status": 1
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "创建帐号",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/accounts",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "email": "${user2-2 email}",
+                "password": "Ab123456",
+                "status": 1,
+                "telPhone": "${user2-2 telphone}"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "email": "${user2-2 email}",
+                  "status": 1,
+                  "telPhone": "${user2-2 telphone}"
+                }
+              }
+            }
+          },
+          {
+            "name": "创建公司",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/companies",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "companyCode": "${companyCode}",
+                "companyName": "${companyName}",
+                "taxNum": "${taxNum}"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "companyCode": "${companyCode}",
+                  "companyName": "${companyName}",
+                  "taxNum": "${taxNum}"
+                }
+              }
+            }
+          },
+          {
+            "name": "公司分页查旬",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/companies?taxNum=${taxNum}",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "content": [
+                    {
+                      "companyCode": "${companyCode}",
+                      "companyName": "${companyName}",
+                      "taxNum": "${taxNum}"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "根据公司id 查询详情",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/companies/${公司分页查旬}[resp][json][result][content][0][companyId]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "companyId": "${公司分页查旬}[resp][json][result][content][0][companyId]",
+                  "companyName": "${companyName}",
+                  "taxNum": "${taxNum}"
+                }
+              }
+            }
+          },
+          {
+            "name": "根据公司id 修改公司",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${url}/api/global${version}/companies/${公司分页查旬}[resp][json][result][content][0][companyId]",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "companyName": "${companyName3}",
+                "companyId": "${公司分页查旬}[resp][json][result][content][0][companyId]",
+                "taxNum": "${taxNum3}"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "companyId": "${公司分页查旬}[resp][json][result][content][0][companyId]",
+                  "companyName": "${companyName3}",
+                  "taxNum": "${taxNum3}"
+                }
+              }
+            }
+          },
+          {
+            "name": "根据公司id 修改公司状态--开启",
+            "type": "http",
+            "input": {
+              "method": "PATCH",
+              "url": "${url}/api/global${version}/companies/${公司分页查旬}[resp][json][result][content][0][companyId]/status/1",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": "更新成功"
+              }
+            }
+          },
+          {
+            "name": "新建服务API成功",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/service-apis",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isSkipAuth": 0,
+                "isSkipCheck": 0,
+                "requestMethod": "GET",
+                "routeId": 1,
+                "serviceApiName": "serviceApiName",
+                "serviceApiPath": "serviceApiName",
+                "serviceApiUrl": "http://baidu.com",
+                "status": 0
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "serviceApiPath": "serviceApiName",
+                  "serviceApiUrl": "http://baidu.com",
+                  "requestMethod": "GET",
+                  "serviceApiName": "serviceApiName",
+                  "status": 0
+                }
+              }
+            }
+          },
+          {
+            "name": "根据服务ID查询详情",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/service-apis/${新建服务API成功}[resp][json][result][serviceApiId]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "serviceApiPath": "serviceApiName",
+                  "serviceApiUrl": "http://baidu.com",
+                  "requestMethod": "GET",
+                  "serviceApiName": "serviceApiName",
+                  "status": 0
+                }
+              }
+            }
+          },
+          {
+            "name": "分页查询服务Api ",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/service-apis?serviceApiName=serviceApiName",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "code": "1",
+                "message": null,
+                "result": {
+                  "content": [
+                    {
+                      "serviceApiId": "${新建服务API成功}[resp][json][result][serviceApiId]",
+                      "serviceApiPath": "serviceApiName",
+                      "serviceApiUrl": "http://baidu.com",
+                      "requestMethod": "GET",
+                      "serviceApiName": "serviceApiName"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "根据服务ID更新服务API 信息",
+            "type": "http",
+            "input": {
+              "method": "put",
+              "url": "${url}/api/global${version}/service-apis/${新建服务API成功}[resp][json][result][serviceApiId]",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isSkipAuth": 0,
+                "isSkipCheck": 0,
+                "requestMethod": "GET",
+                "routeId": 0,
+                "serviceApiId": "${新建服务API成功}[resp][json][result][serviceApiId]",
+                "serviceApiName": "serviceApiName1",
+                "serviceApiPath": "serviceApiName1",
+                "serviceApiUrl": "http://baidu.com",
+                "status": 0
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "serviceApiPath": "serviceApiName1",
+                  "serviceApiUrl": "http://baidu.com",
+                  "requestMethod": "GET",
+                  "serviceApiName": "serviceApiName1",
+                  "status": 0
+                }
+              }
+            }
+          },
+          {
+            "name": "新增资源码",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isServicePackage": true,
+                "parentId": 0,
+                "resourceCode": "resourceCodeTest",
+                "resourceName": "resourceCodeTest",
+                "resourcePlatform": 0,
+                "resourceType": 0,
+                "status": 0
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": {
+                  "appId": "1",
+                  "resourceCode": "resourceCodeTest",
+                  "resourceName": "resourceCodeTest"
+                }
+              }
+            }
+          },
+          {
+            "name": "根据资源码id 查询详情",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/resources/${新增资源码}[resp][json][result][resourceId]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": {
+                  "appId": "1",
+                  "resourceCode": "resourceCodeTest",
+                  "resourceName": "resourceCodeTest"
+                }
+              }
+            }
+          },
+          {
+            "name": "资源码分页",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/resources?resourceCode=resourceCodeTest",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "content": [
+                    {
+                      "resourceId": "${新增资源码}[resp][json][result][resourceId]",
+                      "appId": "1",
+                      
+                      "resourceCode": "resourceCodeTest",
+                      "resourceName": "resourceCodeTest"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "资源码信息修改",
+            "type": "http",
+            "input": {
+              "method": "put",
+              "url": "${url}/api/global${version}/resources/${新增资源码}[resp][json][result][resourceId]",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isServicePackage": true,
+                "resourceCode": "resourceCodeTest1",
+                "resourceName": "resourceCodeTest1",
+                "resourcePlatform": 0,
+                "resourceType": 0,
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "resourceId": "${新增资源码}[resp][json][result][resourceId]",
+                  "appId": "1",
+                  "resourceCode": "resourceCodeTest1",
+                  "resourceName": "resourceCodeTest1"
+                }
+              }
+            }
+          },
+          {
+            "name": "新建功能集",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${新增资源码}[resp][json][result][resourceId]"
+                  ]
+                },
+                "resourceId": "${新增资源码}[resp][json][result][resourceId]",
+                "resourcesetDesc": "resourcesetName",
+                "resourcesetId": 0,
+                "resourcesetName": "resourcesetName",
+                "resourcesetCode": "resourcesetName",
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "appId": "1",
+                  "resourceId": "${新增资源码}[resp][json][result][resourceId]",
+                  "resourcesetName": "resourcesetName",
+                  "resourcesetDesc": "resourcesetName",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "功能集分页",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/resourcesets?resourcesetName=resourcesetName",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "content": [
+                    {
+                      "resourcesetId": "${新建功能集}[resp][json][result][resourcesetId]",
+                      "appId": "1",
+                      
+                      "resourcesetName": "resourcesetName",
+                      "resourcesetDesc": "resourcesetName"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "功能集详情",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/resourcesets/${新建功能集}[resp][json][result][resourcesetId]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "resourcesetId": "${新建功能集}[resp][json][result][resourcesetId]",
+                  "appId": "1",
+                  
+                  "resourcesetName": "resourcesetName",
+                  "resourcesetDesc": "resourcesetName",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "修改功能集状态",
+            "type": "http",
+            "input": {
+              "method": "PATCH",
+              "url": "${url}/api/global${version}/resourcesets/${新建功能集}[resp][json][result][resourcesetId]/status/1",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": "修改成功"
+              }
+            }
+          },
+          {
+            "name": "修改功能集信息",
+            "type": "http",
+            "input": {
+              "method": "put",
+              "url": "${url}/api/global${version}/resourcesets/${新建功能集}[resp][json][result][resourcesetId]",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "resourceId": "${新增资源码}[resp][json][result][resourceId]",
+                "resourcesetDesc": "resourcesetName1",
+                "resourcesetCode": "resourcesetName1",
+                "resourcesetId": "${新建功能集}[resp][json][result][resourcesetId]",
+                "resourcesetName": "resourcesetName1",
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "resourcesetId": "${新建功能集}[resp][json][result][resourcesetId]",
+                  "appId": "1",
+                  "resourceId": "${新增资源码}[resp][json][result][resourceId]",
+                  "resourcesetName": "resourcesetName1",
+                  "resourcesetDesc": "resourcesetName1",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "新建服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${新建功能集}[resp][json][result][resourcesetId]"
+                  ]
+                },
+                "servicePackageDesc": "${servicePackageName}",
+                "servicePackageName": "${servicePackageName}",
+                "servicePackageCode": "${servicePackageName}",
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "appId": "1",
+                  "servicePackageName": "${servicePackageName}",
+                  "servicePackageCode": "${servicePackageName}",
+                  "servicePackageDesc": "${servicePackageName}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "获取服务包详情",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/packages/${新建服务包}[resp][json][result][servicePackageId]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "servicePackageId": "${新建服务包}[resp][json][result][servicePackageId]",
+                  "appId": "1",
+                  "servicePackageName": "${servicePackageName}",
+                  "servicePackageCode": "${servicePackageName}",
+                  "servicePackageDesc": "${servicePackageName}",
+                  "status": 1,
+                  "resourcesets": [
+                    {
+                      "resourcesetId": "${新建功能集}[resp][json][result][resourcesetId]",
+                      "appId": "1",
+                      
+                      "resourcesetName": "resourcesetName1",
+                      "resourcesetDesc": "resourcesetName1",
+                      "status": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "更新服务包",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${url}/api/global${version}/packages/${新建服务包}[resp][json][result][servicePackageId]",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${新建功能集}[resp][json][result][resourcesetId]"
+                  ]
+                },
+                "servicePackageDesc": "${servicePackageName1}",
+                "servicePackageName": "${servicePackageName1}",
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "servicePackageId": "${新建服务包}[resp][json][result][servicePackageId]",
+                  "appId": "1",
+                  "servicePackageName": "${servicePackageName1}",
+                  "servicePackageDesc": "${servicePackageName1}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "查询服务包列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/packages?appId=1",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null
+            }
+          },
+          {
+            "name": "新建公司服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/companies/resource-set",
+              "params": null,
+              "data": null,
+              "req_json": [
+                {
+                  "appId": "1",
+                  "resourceSetId": "${查询服务包列表}[resp][json][result][content][0][servicePackageId]",
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+                },
+                {
+                  "appId": "1",
+                  "resourceSetId": "${查询服务包列表}[resp][json][result][content][1][servicePackageId]",
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+                }
+              ],
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json_contains": {
+                "result": "成功"
+              }
+            }
+          },
+          {
+            "name": "新建角色成功",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "roleCode": "roleCode",
+                "roleDesc": "roleCode",
+                "roleName": "roleCode",
+                "status": 1,
+                "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "code": "roleCode",
+                  "name": "roleCode",
+                  "roleDesc": "roleCode",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "新增用户",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "roleCodes": [
+                  "roleCode"
+                ],
+                "status": 1,
+                "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                "userCode": "${user4}",
+                "userName": "${user4 telphone}",
+                "userNumber": "${user4 telphone}",
+                "userPhone": "${user4 telphone}",
+                "account": {
+                  "password": "Ab123456",
+                  "username": "${user4 telphone}"
+                }
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+                }
+              }
+            }
+          },
+          {
+            "name": "获取用户分页",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/users?tenantId=${新建租户}[resp][json][result][tenant][tenantId]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "content": [
+                    {
+                      "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "新建第二个角色成功",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "roleCode": "roleCode1",
+                "roleDesc": "roleCode1",
+                "roleName": "roleCode1",
+                "status": 1,
+                "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "code": "roleCode1",
+                  "name": "roleCode1",
+                  "roleDesc": "roleCode1",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "绑定角色",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users/${获取用户分页}[resp][json][result][content][0][id]/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "overwrite": true,
+                "roleIds": [
+                  "${新建第二个角色成功}[resp][json][result][id]",
+                  1
+                ]
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": "绑定成功"
+              }
+            }
+          },
+          {
+            "name": "更新用户状态",
+            "type": "http",
+            "input": {
+              "method": "post",
+              "url": "${url}/api/global${version}/users/${获取用户分页}[resp][json][result][content][0][id]/status/1",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": "更新状态成功"
+              }
+            }
+          },
+          {
+            "name": "获取用户详情",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/global${version}/users/${获取用户分页}[resp][json][result][content][0][id]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "id": "${获取用户分页}[resp][json][result][content][0][id]",
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "tenant": {
+                    "tenantName": "${tenantCode}",
+                    "tenantCode": "${tenantCode}",
+                    "tenantDesc": "${tenantCode}"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "用户绑定组织",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users/${获取用户分页}[resp][json][result][content][0][id]/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "orgIds": [
+                  "${新建租户}[resp][json][result][orgs][1][orgId]",
+                  "${新建租户}[resp][json][result][orgs][0][orgId]"
+                ],
+                "overwrite": true
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": "绑定成功"
+              }
+            }
+          },
+          {
+            "name": "获取用户资源码集合",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/users/${获取用户分页}[resp][json][result][content][0][id]/resources",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "更新用户状态",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users/${获取用户分页}[resp][json][result][content][0][id]/status/1",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": "更新状态成功"
+              }
+            }
+          },
+          {
+            "name": "根据用户名获取用户详情",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/users/info?username=${获取用户分页}[resp][json][result][content][0][userName]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "userName": "${获取用户分页}[resp][json][result][content][0][userName]",
+                  "tenant": {
+                    "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                    "tenantName": "${tenantCode}",
+                    "tenantCode": "${tenantCode}",
+                    "tenantDesc": "${tenantCode}",
+                    "status": 1
+                  },
+                  "account": {
+                    "status": 1
+                  },
+                  "admin": true
+                }
+              }
+            }
+          },
+          {
+            "name": "查询租户信息",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/global${version}/tenants/${新建租户}[resp][json][result][tenant][tenantId]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "tenantName": "${tenantCode}",
+                  "tenantCode": "${tenantCode}",
+                  "tenantDesc": "${tenantCode}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "更新租户信息",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${url}/api/global${version}/tenants/${新建租户}[resp][json][result][tenant][tenantId]",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "operateReason": "",
+                "settledOrigin": "",
+                "status": 1,
+                "tenantCode": "${tenantCode1}",
+                "tenantDesc": "${tenantCode1}",
+                "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                "tenantName": "${tenantCode1}"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "tenantName": "${tenantCode1}",
+                  "tenantCode": "${tenantCode1}",
+                  "tenantDesc": "${tenantCode1}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "获取租户分页列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/tenants?tenantCode=${tenantCode1}",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "content": [
+                    {
+                      "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                      "tenantName": "${tenantCode1}",
+                      "tenantCode": "${tenantCode1}",
+                      "tenantDesc": "${tenantCode1}",
+                      "settledOrigin": "",
+                      "operateReason": "",
+                      "status": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "新增组织--集团成功",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "extensions": [
+                  {
+                    "extensionKey": "key",
+                    "extensionValue": "value"
+                  }
+                ],
+                "orgCode": "${orgCode}",
+                "orgDesc": "${orgDesc}",
+                "orgName": "${orgName}",
+                "orgType": "0",
+                "status": 1,
+                "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "orgCode": "${orgCode}",
+                  "orgName": "${orgName}",
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "orgType": "2",
+                  "orgDesc": "${orgDesc}",
+                  "status": 1,
+                  "extensions": [
+                    {
+                      "extensionKey": "key",
+                      "extensionValue": "value"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "初始化sql1",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from bss_company where company_code='${companyCode3}' or company_name='${companyName3}' or tax_num='${taxNum3}'"
+            ]
+          },
+          {
+            "name": "新增组织--公司成功",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "company": {
+                  "companyCode": "${companyCode3}",
+                  "companyName": "${companyName3}",
+                  "taxNum": "${taxNum3}"
+                },
+                "extensions": [
+                  {
+                    "extensionKey": "key",
+                    "extensionValue": "value"
+                  }
+                ],
+                "orgCode": "${orgCode1}",
+                "parentId": "${新增组织--集团成功}[resp][json][result][orgId]",
+                "orgDesc": "${orgDesc1}",
+                "orgName": "${orgName1}",
+                "orgType": "1",
+                "status": 1,
+                "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "orgCode": "${orgCode1}",
+                  "orgName": "${orgName1}",
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "orgType": "1",
+                  "orgDesc": "${orgDesc1}",
+                  "status": 1,
+                  "extensions": [
+                    {
+                      "extensionKey": "key",
+                      "extensionValue": "value"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "新增组织--公司下新建组织成功",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "extensions": [
+                  {
+                    "extensionKey": "key",
+                    "extensionValue": "value"
+                  }
+                ],
+                "orgCode": "${orgCode2}",
+                "parentId": "${新增组织--公司成功}[resp][json][result][orgId]",
+                "orgDesc": "${orgDesc2}",
+                "orgName": "${orgName2}",
+                "orgType": "2",
+                "status": 1,
+                "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "orgCode": "${orgCode2}",
+                  "orgName": "${orgName2}",
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "orgType": "2",
+                  "orgDesc": "${orgDesc2}",
+                  "status": 1,
+                  "extensions": [
+                    {
+                      "extensionKey": "key",
+                      "extensionValue": "value"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "获取组织子孙列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/orgs/${新增组织--集团成功}[resp][json][result][orgId]/descendants",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": [
+                  {
+                    "orgId": "${新增组织--集团成功}[resp][json][result][orgId]",
+                    "orgCode": "${orgCode}",
+                    "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                    "orgType": "2",
+                    "status": 1,
+                    "tenantCode": "${tenantCode1}"
+                  },
+                  {
+                    "orgId": "${新增组织--公司成功}[resp][json][result][orgId]",
+                    "orgCode": "${orgCode1}",
+                    "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                    "companyId": "${新增组织--公司成功}[resp][json][result][companyId]",
+                    "orgType": "1",
+                    "taxNum": "${taxNum3}",
+                    "companyName": "${companyName3}",
+                    "status": 1,
+                    "tenantCode": "${tenantCode1}"
+                  },
+                  {
+                    "orgId": "${新增组织--公司下新建组织成功}[resp][json][result][orgId]",
+                    "orgCode": "${orgCode2}",
+                    "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                    "orgType": "2",
+                    "status": 1,
+                    "tenantCode": "${tenantCode1}"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "用户绑定组织列表",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users/${获取用户分页}[resp][json][result][content][0][id]/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "orgIds": [
+                  "${新增组织--集团成功}[resp][json][result][orgId]",
+                  "${新增组织--公司成功}[resp][json][result][orgId]",
+                  "${新增组织--公司下新建组织成功}[resp][json][result][orgId]"
+                ],
+                "overwrite": true
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": "绑定成功"
+              }
+            }
+          },
+          {
+            "name": "组织用户列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/orgs/${新增组织--集团成功}[resp][json][result][orgId]/users",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "content": [
+                    {
+                      "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "获取组织详情成功",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/orgs/${新增组织--集团成功}[resp][json][result][orgId]",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "orgId": "${新增组织--集团成功}[resp][json][result][orgId]",
+                  "orgCode": "${orgCode}",
+                  "orgName": "${orgName}",
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "orgType": "2",
+                  "orgDesc": "${orgDesc}",
+                  "status": 1,
+                  "tenant": {
+                    "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                    "tenantName": "${tenantName1}",
+                    "tenantCode": "${tenantCode1}",
+                    "tenantDesc": "${tenantCode1}",
+                    "status": 1
+                  },
+                  "tenantName": "${tenantName1}",
+                  "tenantCode": "${tenantName1}"
+                }
+              }
+            }
+          },
+          {
+            "name": "更新组织",
+            "type": "http",
+            "input": {
+              "method": "put",
+              "url": "${url}/api/global${version}/orgs/${新增组织--集团成功}[resp][json][result][orgId]",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "extensions": [
+                  {
+                    "extensionKey": "key",
+                    "extensionValue": "value"
+                  }
+                ],
+                "orgCode": "${orgCode1}",
+                "orgDesc": "${orgDesc1}",
+                "orgName": "${orgName1}",
+                "orgType": "0",
+                "status": 1,
+                "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "orgCode": "${orgCode1}",
+                  "orgName": "${orgName1}",
+                  "tenantId": "${新建租户}[resp][json][result][tenant][tenantId]",
+                  "orgType": "0",
+                  "orgDesc": "${orgDesc1}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "修改组织状态--停用",
+            "type": "http",
+            "input": {
+              "method": "PATCH",
+              "url": "${url}/api/global${version}/orgs/${新增组织--集团成功}[resp][json][result][orgId]/status/0",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": "修改成功"
+              }
+            }
+          },
+          {
+            "name": "修改组织状态--启用",
+            "type": "http",
+            "input": {
+              "method": "PATCH",
+              "url": "${url}/api/global${version}/orgs/${新增组织--集团成功}[resp][json][result][orgId]/status/1",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": "修改成功"
+              }
+            }
+          },
+          {
+            "name": "获取组织分页",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/orgs?orgCode=${orgCode1}&status=1",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "content": [
+                    {
+                      "orgCode": "${orgCode1}",
+                      "orgName": "${orgName1}",
+                      "orgDesc": "${orgDesc1}"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "新增应用",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/apps",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "100000",
+                "appName": "${appName}",
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "appId": "100000",
+                  "appName": "${appName}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "修改应用",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${url}/api/global${version}/apps/${新增应用}[resp][json][result][appId]",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${新增应用}[resp][json][result][appId]",
+                "appName": "${appName1}",
+                "status": 1
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "result": {
+                  "appName": "${appName1}",
+                  "status": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "批量创建多个合法帐号成功",
+        "steps": [
+          {
+            "name": "取token",
+            "type": "keyword",
+            "keyword": "获取token",
+            "params": [
+              "${login_url}",
+              "${user1 email}",
+              "${user1 password}"
+            ]
+          },
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_sass_account where email like '%${user2 email}' or tel_phone='${user2 telphone}%' or username='%${user2}'"
+            ]
+          },
+          {
+            "name": "测试步骤2",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/accounts/batch",
+              "params": null,
+              "data": null,
+              "req_json": [
+                {
+                  "email": "${user2 email}",
+                  "password": "${user2 password}",
+                  "status": 1,
+                  "telPhone": "${user2 telphone}",
+                  "username": "${user2}"
+                },
+                {
+                  "email": "${user2-2 email}",
+                  "password": "${user2-2 password}",
+                  "status": 1,
+                  "telPhone": "${user2-2 telphone}",
+                  "username": "${user2-2}"
+                }
+              ],
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": [
+                  {
+                    "email": "${user2 email}",
+                    "telPhone": "${user2 telphone}",
+                    "status": 1,
+                    "username": "${user2}"
+                  },
+                  {
+                    "email": "${user2-2 email}",
+                    "telPhone": "${user2-2 telphone}",
+                    "status": 1,
+                    "username": "${user2-2}"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "sql结果查询",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from sys_sass_account where email like '%${user2 email}' or tel_phone='${user2 telphone}%' or username like '%${user2}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${sql结果查询}",
+              "${2}"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "正确的帐号id查询",
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_sass_account where email='${user2 email}' or tel_phone='${user2 telphone}' or username='${user2}'"
+            ]
+          },
+          {
+            "name": "取token",
+            "type": "keyword",
+            "keyword": "获取token",
+            "params": [
+              "${login_url}",
+              "${user1 email}",
+              "${user1 password}"
+            ]
+          },
+          {
+            "name": "测试步骤2",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/accounts",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "email": "${user2 email}",
+                "password": "${user2 password}",
+                "status": 1,
+                "telPhone": "${user2 telphone}",
+                "username": "${user2}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": {
+                  "email": "${user2 email}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "测试步骤3",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/accounts/${测试步骤2}[resp][json][result][accountId]",
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": {
+                  "accountId": "${测试步骤2}[resp][json][result][accountId]",
+                  "email": "itest@163.com",
+                  "status": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "根据正确的帐号id 更新数据成功",
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_sass_account where email='${user2 email}' or tel_phone='${user2 telphone}' or username='${user2}'",
+              "delete from sys_sass_account where email='${user2 email}2' or tel_phone='${user2 telphone}2' or username='${user2}'"
+            ]
+          },
+          {
+            "name": "创建account",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/accounts",
+              "req_json": {
+                "email": "${user2 email}",
+                "password": "${user2 password}",
+                "status": 1,
+                "telPhone": "${user2 telphone}",
+                "username": "${user2}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": {
+                  "email": "${user2 email}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "设置suite变量",
+            "type": "rft",
+            "keyword": "set suite variable",
+            "params": [
+              "${accountId}",
+              "${创建account}[resp][json][result][accountId]"
+            ]
+          },
+          {
+            "name": "测试步骤3",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${url}/api/global${version}/accounts/${创建account}[resp][json][result][accountId]",
+              "req_json": {
+                "accountId": "${创建account}[resp][json][result][accountId]",
+                "email": "${user2 email}2",
+                "password": "${user2 password}",
+                "status": 1,
+                "telPhone": "${user2 telphone}2"
+              },
+              "req_headers": "${token['${user1 email}']}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": {
+                  "accountId": "${创建account}[resp][json][result][accountId]",
+                  "email": "${user2 email}2",
+                  "status": 1,
+                  "telPhone": "${user2 telphone}2"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "正向_accounts list查询1",
+        "steps": [
+          {
+            "name": "accounts list查询",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/accounts",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "result": {
+                  "size": 20
+                }
+              }
+            }
+          },
+          {
+            "name": "断言1",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${accounts list查询}[resp][json][result][content]",
+              "${accounts list查询}[resp][json][result][numberOfElements]"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "正向-account状态修改成功",
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_sass_account where email='${user2 email}' or tel_phone='${user2 telphone}' or username='${user2}'"
+            ]
+          },
+          {
+            "name": "创建account",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/accounts",
+              "req_json": {
+                "email": "${user2 email}",
+                "password": "${user2 password}",
+                "status": 1,
+                "telPhone": "${user2 telphone}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": {
+                  "email": "${user2 email}",
+                  "status": 1
+                }
+              }
+            }
+          },
+          {
+            "name": "设置suite变量",
+            "type": "rft",
+            "keyword": "set suite variable",
+            "params": [
+              "${accountId}",
+              "${创建account}[resp][json][result][accountId]"
+            ]
+          },
+          {
+            "name": "更改account status",
+            "type": "http",
+            "input": {
+              "method": "patch",
+              "url": "${url}/api/global${version}/accounts/${创建account}[resp][json][result][accountId]/status/0",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "message": null,
+                "result": "修改成功"
+              }
+            }
+          },
+          {
+            "name": "检查account status",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/accounts/${创建account}[resp][json][result][accountId]",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "result": {
+                  "status": 0
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

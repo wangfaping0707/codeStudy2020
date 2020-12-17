@@ -1,0 +1,14 @@
+xfctRft>=0.3.0
+xfctRftBasic>=0.1.4
+xfctRftHttpStep>=0.1.2
+xfctRftMysqlStep>=0.1.2
+xfctKeywordStep>=0.0.3
+xfctRftPythonStep>=0.0.3
+xfctRftStep>=0.1.0
+xforceCloudTest>=0.1.0
+xforceCloudTestBasic>=0.0.2
+atApiBasicLibrary>=0.5.7
+atApiXforce4Login>=0.0.2
+xfctRftMysqlUpdateStep>=0.0.1
+excelTool>=0.0.1
+xfctRftMultipartStep>=0.0.1

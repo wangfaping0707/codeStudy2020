@@ -1,0 +1,225 @@
+[
+  {
+    "name": "禁用商品",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "已审核通过的商品禁用成功",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询品牌方",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/brand/infos?page=1&pageSize=2",
+              "data": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "新建商品",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/product",
+              "data": null,
+              "req_json": {
+                "barCode": "${11位随机串}",
+                "bizType": "1",
+                "brandCode": "${查询品牌方}[resp][json][result][records][0][brandCode]",
+                "category3Code": "10000442",
+                "currencyType": "CNY",
+                "isCross": "0",
+                "orgin": "China",
+                "productCode": "s2030",
+                "productName": "紫色暖心糖果女巫",
+                "productPicUrl": "www.baidu.com/",
+                "salePrice": 1789.6519,
+                "settlementPrice": 1789.6519,
+                "spec": "150*80*170",
+                "suggestPrice": 1900.65,
+                "unit": "个"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "UPDATE product set audit_status='PASS' where product_code in ('${新建商品}[resp][json][result]')"
+            ]
+          },
+          {
+            "name": "查询商品列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/product/items",
+              "params": {
+                "barCode": "${11位随机串}"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "productCode": "${新建商品}[resp][json][result]",
+                      "productName": "紫色暖心糖果女巫",
+                      "productPicUrl": "www.baidu.com/",
+                      "auditStatus": "PASS",
+                      "status": "1",
+                      "barCode": "${11位随机串}"
+                    }
+                  ]
+                },
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "禁用商品",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/product/${查询商品列表}[resp][json][result][records][0][productId]/off",
+              "params": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "查询商品详情",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/product/${查询商品列表}[resp][json][result][records][0][productId]",
+              "params": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "productCode": "${新建商品}[resp][json][result]",
+                  "productName": "紫色暖心糖果女巫",
+                  "productPicUrl": "www.baidu.com/",
+                  "auditStatus": "PASS",
+                  "status": "0",
+                  "barCode": "${11位随机串}"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

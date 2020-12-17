@@ -1,0 +1,37 @@
+[
+  {
+    "name": "keywords-captcha-value",
+    "keywords": [
+      {
+        "name": "captcha-value",
+        "doc": "captcha",
+        "args": [],
+        "steps": [
+          {
+            "name": "captcha-value",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/captcha/value",
+              "req_json": null,
+              "req_headers": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "captcha-set-val",
+            "type": "rft",
+            "keyword": "set test variable",
+            "params": [
+              "${captcha}",
+              "${captcha-value}[resp][json][data]"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

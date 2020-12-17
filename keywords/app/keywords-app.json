@@ -1,0 +1,39 @@
+[
+  {
+    "name": "keywords-app",
+    "keywords": [
+      {
+        "name": "keywords-app-create",
+        "doc": "app-create",
+        "args": [
+          "${tokens}",
+          "${appId}",
+          "${appName}",
+          "${status}"
+        ],
+        "steps": [
+           {
+            "name": "CreateApp",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/apps",
+              "req_json": {
+                "appId": "${appId}",
+                "appName": "${appName}",
+                "status": "${status}"
+              },
+              "req_headers": "${tokens}"
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_json_contains": {
+                "code": "1"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

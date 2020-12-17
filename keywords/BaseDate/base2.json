@@ -1,0 +1,848 @@
+[
+  {
+    "name": "keywords-bat-import-base-data2",
+    "keywords": [
+      {
+        "name": "create_tenant",
+        "doc": "关键字建租户",
+        "args": [
+          "${tokens}",
+          "${tenantCode}",
+          "${email}",
+          "${telPhone}",
+          "${key}",
+          "${value}"
+        ],
+        "steps": [
+          {
+            "name": "tenant",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/tenants",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "extensions": [
+                  {
+                    "extensionKey": "${key}",
+                    "extensionValue": "${value}"
+                  }
+                ],
+                "status": 1,
+                "tenantCode": "${tenantCode}",
+                "tenantDesc": "${tenantCode}",
+                "tenantName": "${tenantCode}",
+                "user": {
+                  "account": {
+                    "email": "${email}",
+                    "password": "Ab123456",
+                    "status": 1,
+                    "telPhone": "${telPhone}",
+                    "type": "PHONE_EMAIL"
+                  },
+                  "status": 1,
+                  "type": "PHONE_EMAIL",
+                  "userType": 0
+                }
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_company",
+        "doc": "关键字建公司",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${companyName}",
+          "${taxNum}",
+          "${key}",
+          "${value}"
+        ],
+        "steps": [
+          {
+            "name": "company",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/companies",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "companyName": "${companyName}",
+                "extensions": [
+                  {
+                    "extensionKey": "${key}",
+                    "extensionValue": "${value}"
+                  }
+                ],
+                "status": 1,
+                "taxNum": "${taxNum}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_resource_serverApi",
+        "doc": "关键字建资源码",
+        "args": [
+          "${tokens}",
+          "${appId}",
+          "${isServicePackage}",
+          "${parentId}",
+          "${resourceCode}",
+           "${serviceApiName}",
+          "${requestMethod}"
+        ],
+        "steps": [
+           {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+
+              "DELETE from sys_resource_api_rel where service_api_id in (select service_api_id from sys_service_api where service_api_name ='${serviceApiName}')",
+              "DELETE from sys_service_api where service_api_name ='${serviceApiName}'",
+              "DELETE from sys_resourceset_resource_rel where resource_id in (select resource_id from sys_resource where resource_code='${resourceCode}')",
+              "DELETE from sys_resource where resource_code='${resourceCode}'"
+            ]
+          },
+          {
+            "name": "resource",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "isServicePackage": "${isServicePackage}",
+                "parentId": "${parentId}",
+                "resourceCode": "${resourceCode}",
+                "resourceName": "${resourceCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "service-apis",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/service-apis",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${resource}[resp][json][result][resourceId]"
+                  ]
+                },
+                "requestMethod": "${requestMethod}",
+                "routeId": 1,
+                "serviceApiName": "${serviceApiName}",
+                "serviceApiPath": "${serviceApiName}",
+                "serviceApiUrl": "${serviceApiName}",
+                "skipAuth": true,
+                "skipCheck": true,
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_resource",
+        "doc": "关键字建资源码",
+        "args": [
+          "${tokens}",
+          "${appId}",
+          "${isServicePackage}",
+          "${parentId}",
+          "${resourceCode}"
+        ],
+        "steps": [
+          {
+            "name": "resource",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "isServicePackage": "${isServicePackage}",
+                "parentId": "${parentId}",
+                "resourceCode": "${resourceCode}",
+                "resourceName": "${resourceCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_resourcesets",
+        "doc": "关键字建功能集",
+        "args": [
+          "${tokens}",
+          "${appId}",
+          "${isServicePackage}",
+          "${parentId}",
+          "${resourceCode}",
+          "${resourcesetCode}"
+        ],
+        "steps": [
+          {
+            "name": "resource",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "isServicePackage": "${isServicePackage}",
+                "parentId": "${parentId}",
+                "resourceCode": "${resourceCode}",
+                "resourceName": "${resourceCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "resourceSet",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${resource}[resp][json][result][resourceId]"
+                  ]
+                },
+                "resourceId": "${resource}[resp][json][result][resourceId]",
+                "resourcesetCode": "${resourcesetCode}",
+                "resourcesetDesc": "${resourcesetCode}",
+                "resourcesetName": "${resourcesetCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_packages",
+        "doc": "关键字建产品服务包",
+        "args": [
+          "${tokens}",
+          "${appId}",
+          "${isServicePackage}",
+          "${parentId}",
+          "${resourceCode}",
+          "${resourcesetCode}",
+          "${servicePackageCode}"
+        ],
+        "steps": [
+          {
+            "name": "resource",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "isServicePackage": "${isServicePackage}",
+                "parentId": "${parentId}",
+                "resourceCode": "${resourceCode}",
+                "resourceName": "${resourceCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "resourceSet",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${resource}[resp][json][result][resourceId]"
+                  ]
+                },
+                "resourceId": "${resource}[resp][json][result][resourceId]",
+                "resourcesetCode": "${resourcesetCode}",
+                "resourcesetDesc": "${resourcesetCode}",
+                "resourcesetName": "${resourcesetCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "packages",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${resourceSet}[resp][json][result][resourcesetId]"
+                  ]
+                },
+                "servicePackageCode": "${servicePackageCode}",
+                "servicePackageDesc": "${servicePackageCode}",
+                "servicePackageName": "${servicePackageCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_company_packages",
+        "doc": "关键字建公司服务包",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${companyId}",
+          "${servicePackageId}"
+        ],
+        "steps": [
+          {
+            "name": "company_packages",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/companies/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "channelId": 1,
+                "companyId": "${companyId}",
+                "companyIds": [
+                  "${companyId}"
+                ],
+                "overwrite": true,
+                "packageIds": [
+                  "${servicePackageId}"
+                ],
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_role",
+        "doc": "关键字建角色",
+        "args": [
+          "${tokens}",
+          "${appId}",
+          "${isServicePackage}",
+          "${parentId}",
+          "${resourceCode}",
+          "${resourcesetCode}",
+          "${servicePackageCode}",
+          "${tenantId}",
+          "${companyName}",
+          "${taxNum}",
+          "${key}",
+          "${value}",
+          "${roleCode}"
+        ],
+        "steps": [
+          {
+            "name": "company",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/companies",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "companyName": "${companyName}",
+                "extensions": [
+                  {
+                    "extensionKey": "${key}",
+                    "extensionValue": "${value}"
+                  }
+                ],
+                "status": 1,
+                "taxNum": "${taxNum}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "resource",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "isServicePackage": "${isServicePackage}",
+                "parentId": "${parentId}",
+                "resourceCode": "${resourceCode}",
+                "resourceName": "${resourceCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "resourceSet",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${resource}[resp][json][result][resourceId]"
+                  ]
+                },
+                "resourceId": "${resource}[resp][json][result][resourceId]",
+                "resourcesetCode": "${resourcesetCode}",
+                "resourcesetDesc": "${resourcesetCode}",
+                "resourcesetName": "${resourcesetCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "packages",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "${appId}",
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${resourceSet}[resp][json][result][resourcesetId]"
+                  ]
+                },
+                "servicePackageCode": "${servicePackageCode}",
+                "servicePackageDesc": "${servicePackageCode}",
+                "servicePackageName": "${servicePackageCode}",
+                "status": 1
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "company_packages",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/companies/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "channelId": 1,
+                "companyId": "${company}[resp][json][result][companyId]",
+                "companyIds": [
+                  "${company}[resp][json][result][companyId]"
+                ],
+                "overwrite": true,
+                "packageIds": [
+                  "${packages}[resp][json][result][servicePackageId]"
+                ],
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "company_role",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${resourceSet}[resp][json][result][resourcesetId]"
+                  ]
+                },
+                "roleCode": "${roleCode}",
+                "roleDesc": "${roleCode}",
+                "roleName": "${roleCode}",
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+
+
+
+      {
+        "name": "create_role_1",
+        "doc": "关键字建角色不关联功能集",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${roleCode}"
+        ],
+        "steps": [
+          {
+            "name": "单建角色不关联功能集",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${tenantId}${version}/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "roleCode": "${roleCode}",
+                "roleDesc": "${roleCode}",
+                "roleName": "${roleCode}",
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_org",
+        "doc": "关键字建组织",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${companyName}",
+          "${taxNum}",
+          "${companyNo}",
+          "${key}",
+          "${value}",
+          "${orgType}",
+          "${orgCode}",
+          "${parentCode}",
+          "${withApplication}"
+        ],
+        "steps": [
+          {
+            "name": "create_orgs",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "company": {
+                  "companyName": "${companyName}",
+                  "extensions": [
+                    {
+                      "extensionKey": "${key}",
+                      "extensionValue": "${value}"
+                    }
+                  ],
+                  "status": 1,
+                  "taxNum": "${taxNum}"
+                },
+                "companyNos": [
+                  "${companyNo}"
+                ],
+                "extensions": [
+                  {
+                    "extensionKey": "${key}",
+                    "extensionValue": "${value}"
+                  }
+                ],
+                "orgCode": "${orgCode}",
+                "orgDesc": "${orgCode}",
+                "orgName": "${orgCode}",
+                "orgType": "${orgType}",
+                "overwrite": true,
+                "parentCode": "${parentCode}",
+                "status": 1,
+                "tenantId": "${tenantId}",
+                "uniqueCompany": true,
+                "withApplication": "${withApplication}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "create_user",
+        "doc": "关键字建用户",
+        "args": [
+          "${tokens}",
+          "${tenantId}",
+          "${type}",
+          "${email}",
+          "${telPhone}",
+          "${username}",
+          "${userType}"
+        ],
+        "steps": [
+          {
+            "name": "create_users",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/current${version}/users",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "account": {
+                  "email": "${email}",
+                  "password": "Ab123456",
+                  "status": 1,
+                  "telPhone": "${telPhone}",
+                  "type": "${type}",
+                  "username": "${username}"
+                },
+                "tenantId": "${tenantId}",
+                "status": 1,
+                "userCode": "${telPhone}",
+                "userType": "${userType}"
+              },
+              "req_headers": "${tokens}",
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null,
+              "expect_resp_json_contains": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

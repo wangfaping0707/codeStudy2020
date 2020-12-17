@@ -1,0 +1,88 @@
+[
+  {
+    "name": "创建组织",
+    "keywords": [
+      {
+        "name": "新增组织-集团",
+        "doc": "新增集团，需要先得到新增租户的tenantId，以及新建租户时的token,执行",
+        "args": [
+          "${org_dict}",
+          "${url}",
+          "${version}",
+          "${tenantId}",
+          "${token}"
+        ],
+        "steps": [
+          {
+            "name": "新增组织-集团",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "orgCode": "${org_dict}[code]",
+                "orgDesc": "${org_dict}[desc]",
+                "orgName": "${org_dict}[name]",
+                "orgType": "0",
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "新增组织-公司",
+        "doc": "新增公司，依赖集团的orgId和租户tenantId",
+        "args": [
+          "${taxNum}",
+          "${company_dict}",
+          "${url}",
+          "${version}",
+          "${org_dict}",
+          "${orgId}",
+          "${tenantId}",
+          "${token}"
+        ],
+        "steps": [
+          {
+            "name": "新增组织-公司",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "company": {
+                  "companyCode": "${company_dict}[code]",
+                  "companyName": "${company_dict}[name]",
+                  "taxNum": "${taxNum}"
+                },
+                "extensions": [
+                  {
+                    "extensionKey": "key",
+                    "extensionValue": "value"
+                  }
+                ],
+                "parentId": "${orgId}",
+                "orgCode": "${org_dict}[code]",
+                "orgDesc": "${org_dict}[desc]",
+                "orgName": "${org_dict}[name]",
+                "orgType": "1",
+                "status": 1,
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

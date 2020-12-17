@@ -1,0 +1,102 @@
+[
+  {
+    "name": "keywords-settle-flows",
+    "doc": "一站式入驻流程测试关键字集合",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-tenants",
+      "keywords-taxNum",
+      "keywords-uuid"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-settle-flow",
+        "args": [
+          "${flowCode}",
+          "${flowName}",
+          "${needStep}"
+        ],
+        "steps": [
+          {
+            "name": "create-tenant",
+            "doc": "新建租户",
+            "type": "keyword",
+            "keyword": "kw-create-tenant"
+          },
+          {
+            "name": "create-settle-flow",
+            "doc": "创建一站式入驻流程",
+            "type": "http",
+            "input": {
+              "url": "${url}/api/global${version}/settle/flows",
+              "method": "POST",
+              "req_json": {
+                "flowCode": "${flowCode}",
+                "flowName": "${flowName}",
+                "needStep": "${needStep}",
+                "tenantId": "${create-tenant}[resp][json][result][tenant][tenantId]",
+                "tenantCode": "${create-tenant}[resp][json][result][tenant][tenantCode]"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-page-settle-flow",
+        "steps": [
+          {
+            "name": "page-settle-flow",
+            "doc": "一站式入驻流程分页查询",
+            "type": "http",
+            "input": {
+              "url": "${url}/api/global${version}/settle/flows",
+              "method": "GET",
+              "params": {
+                "row": "1"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-info-settle-flow",
+        "args": [
+          "${flowId}"
+        ],
+        "steps": [
+          {
+            "name": "info-settle-flow",
+            "doc": "一站式入驻流程根据id查询详情",
+            "type": "http",
+            "input": {
+              "url": "${url}/api/global${version}/settle/flows/${flowId}",
+              "method": "GET",
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-delete-settle-flow",
+        "args": [
+          "${flowId}"
+        ],
+        "steps": [
+          {
+            "name": "delete-settle-flow",
+            "doc": "一站式入驻流程根据id删除",
+            "type": "http",
+            "input": {
+              "url": "${url}/api/global${version}/settle/flows/${flowId}",
+              "method": "DELETE",
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

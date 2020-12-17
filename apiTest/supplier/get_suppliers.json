@@ -1,0 +1,1256 @@
+[
+  {
+    "name": "查询供应商列表",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "按supplierName查询供应商列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "新建子供应商",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/supplier/son",
+              "data": null,
+              "req_json": {
+                "addressDetail": "浙江省湖州${11位随机串}",
+                "bank": "中国建设${11位随机串}",
+                "bankAccount": "62160017${11位随机串}",
+                "bankOwnerName": "曹玲玲",
+                "cityCode": "3305",
+                "cityName": "湖州市",
+                "contact": "${11位随机串}",
+                "countryCode": "CN",
+                "countryName": "中国",
+                "countyCode": "330521",
+                "countyName": "${11位随机串}",
+                "legalPerson": "${11位随机串}",
+                "legalPersonId": "110101199003078451",
+                "phone": "${11位随机串}",
+                "provinceCode": "33",
+                "provinceName": "浙江省",
+                "regionCode": "330503",
+                "regionName": "南浔区",
+                "socialCreditCode": "${11位随机串}",
+                "streetCode": "6312",
+                "streetName": "三诡街道",
+                "supplierCode": "g96502",
+                "supplierName": "${11位随机串}",
+                "supplierType": "1",
+                "taxNo": "1932000${11位随机串}",
+                "zipCode": "236574"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查厂家资料建档申请",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from supplier where supplier_name='${11位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查厂家资料建档申请}",
+              "${1}"
+            ]
+          },
+          {
+            "name": "查询供应商列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/supplier?",
+              "data": null,
+              "params": {
+                "page": "1",
+                "pageSize": "20",
+                "supplierName": "${11位随机串}"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "supplierName": "${11位随机串}",
+                      "socialCreditCode": "${11位随机串}",
+                      "taxNo": "1932000${11位随机串}",
+                      "bank": "中国建设${11位随机串}",
+                      "bankAccount": "62160017${11位随机串}",
+                      "legalPerson": "${11位随机串}",
+                      "level": 2,
+                      "countryCode": "CN",
+                      "countryName": "中国",
+                      "regionCode": "330503",
+                      "regionName": "南浔区",
+                      "provinceCode": "33",
+                      "provinceName": "浙江省",
+                      "cityCode": "3305",
+                      "cityName": "湖州市",
+                      "countyCode": "330521",
+                      "countyName": "${11位随机串}",
+                      "streetCode": "6312",
+                      "streetName": "三诡街道",
+                      "zipCode": "236574",
+                      "addressDetail": "浙江省湖州${11位随机串}",
+                      "phone": "${11位随机串}",
+                      "contact": "${11位随机串}",
+                      "supplierType": "1",
+                      "auditStatus": "CREATED",
+                      "status": "1",
+                      "remark": ""
+                    }
+                  ],
+                  "total": "1",
+                  "size": "20",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "按supplierCode查询供应商列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "新建子供应商",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/supplier/son",
+              "data": null,
+              "req_json": {
+                "addressDetail": "浙江省湖州${11位随机串}",
+                "bank": "中国建设${11位随机串}",
+                "bankAccount": "62160017${11位随机串}",
+                "bankOwnerName": "曹玲玲",
+                "cityCode": "3305",
+                "cityName": "湖州市",
+                "contact": "${11位随机串}",
+                "countryCode": "CN",
+                "countryName": "中国",
+                "countyCode": "330521",
+                "countyName": "${11位随机串}",
+                "legalPerson": "${11位随机串}",
+                "legalPersonId": "110101199003078451",
+                "phone": "${11位随机串}",
+                "provinceCode": "33",
+                "provinceName": "浙江省",
+                "regionCode": "330503",
+                "regionName": "南浔区",
+                "socialCreditCode": "${11位随机串}",
+                "streetCode": "6312",
+                "streetName": "三诡街道",
+                "supplierCode": "${uuid}",
+                "supplierName": "${11位随机串}",
+                "supplierType": "1",
+                "taxNo": "1932000${11位随机串}",
+                "zipCode": "236574"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查厂家资料建档申请",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from supplier where supplier_name='${11位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查厂家资料建档申请}",
+              "${1}"
+            ]
+          },
+          {
+            "name": "查询供应商列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/supplier?",
+              "data": null,
+              "params": {
+                "page": "1",
+                "pageSize": "20",
+                "supplierCode": "${uuid}"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "supplierName": "${11位随机串}",
+                      "socialCreditCode": "${11位随机串}",
+                      "taxNo": "1932000${11位随机串}",
+                      "bank": "中国建设${11位随机串}",
+                      "bankAccount": "62160017${11位随机串}",
+                      "legalPerson": "${11位随机串}",
+                      "level": 2,
+                      "supplierCode": "${uuid}",
+                      "countryCode": "CN",
+                      "countryName": "中国",
+                      "regionCode": "330503",
+                      "regionName": "南浔区",
+                      "provinceCode": "33",
+                      "provinceName": "浙江省",
+                      "cityCode": "3305",
+                      "cityName": "湖州市",
+                      "countyCode": "330521",
+                      "countyName": "${11位随机串}",
+                      "streetCode": "6312",
+                      "streetName": "三诡街道",
+                      "zipCode": "236574",
+                      "addressDetail": "浙江省湖州${11位随机串}",
+                      "phone": "${11位随机串}",
+                      "contact": "${11位随机串}",
+                      "supplierType": "1",
+                      "auditStatus": "CREATED",
+                      "status": "1",
+                      "remark": ""
+                    }
+                  ],
+                  "total": "1",
+                  "size": "20",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "按supplierCode+supplierType查询供应商列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "新建子供应商",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/supplier/son",
+              "data": null,
+              "req_json": {
+                "addressDetail": "浙江省湖州${11位随机串}",
+                "bank": "中国建设${11位随机串}",
+                "bankAccount": "62160017${11位随机串}",
+                "bankOwnerName": "曹玲玲",
+                "cityCode": "3305",
+                "cityName": "湖州市",
+                "contact": "${11位随机串}",
+                "countryCode": "CN",
+                "countryName": "中国",
+                "countyCode": "330521",
+                "countyName": "${11位随机串}",
+                "legalPerson": "${11位随机串}",
+                "legalPersonId": "110101199003078451",
+                "phone": "${11位随机串}",
+                "provinceCode": "33",
+                "provinceName": "浙江省",
+                "regionCode": "330503",
+                "regionName": "南浔区",
+                "socialCreditCode": "${11位随机串}",
+                "streetCode": "6312",
+                "streetName": "三诡街道",
+                "supplierCode": "${uuid}",
+                "supplierName": "${11位随机串}",
+                "supplierType": "1",
+                "taxNo": "1932000${11位随机串}",
+                "zipCode": "236574"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查厂家资料建档申请",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from supplier where supplier_name='${11位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查厂家资料建档申请}",
+              "${1}"
+            ]
+          },
+          {
+            "name": "查询供应商列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/supplier?",
+              "data": null,
+              "params": {
+                "page": "1",
+                "pageSize": "20",
+                "supplierType": "1",
+                "supplierCode": "${uuid}"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "supplierName": "${11位随机串}",
+                      "socialCreditCode": "${11位随机串}",
+                      "taxNo": "1932000${11位随机串}",
+                      "bank": "中国建设${11位随机串}",
+                      "bankAccount": "62160017${11位随机串}",
+                      "legalPerson": "${11位随机串}",
+                      "level": 2,
+                      "supplierType": "1",
+                      "supplierCode": "${uuid}",
+                      "countryCode": "CN",
+                      "countryName": "中国",
+                      "regionCode": "330503",
+                      "regionName": "南浔区",
+                      "provinceCode": "33",
+                      "provinceName": "浙江省",
+                      "cityCode": "3305",
+                      "cityName": "湖州市",
+                      "countyCode": "330521",
+                      "countyName": "${11位随机串}",
+                      "streetCode": "6312",
+                      "streetName": "三诡街道",
+                      "zipCode": "236574",
+                      "addressDetail": "浙江省湖州${11位随机串}",
+                      "phone": "${11位随机串}",
+                      "contact": "${11位随机串}",
+                      "supplierType": "1",
+                      "auditStatus": "CREATED",
+                      "status": "1",
+                      "remark": ""
+                    }
+                  ],
+                  "total": "1",
+                  "size": "20",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "按taxNo查询供应商列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "新建子供应商",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/supplier/son",
+              "data": null,
+              "req_json": {
+                "addressDetail": "浙江省湖州${11位随机串}",
+                "bank": "中国建设${11位随机串}",
+                "bankAccount": "62160017${11位随机串}",
+                "bankOwnerName": "曹玲玲",
+                "cityCode": "3305",
+                "cityName": "湖州市",
+                "contact": "${11位随机串}",
+                "countryCode": "CN",
+                "countryName": "中国",
+                "countyCode": "330521",
+                "countyName": "${11位随机串}",
+                "legalPerson": "${11位随机串}",
+                "legalPersonId": "110101199003078451",
+                "phone": "${11位随机串}",
+                "provinceCode": "33",
+                "provinceName": "浙江省",
+                "regionCode": "330503",
+                "regionName": "南浔区",
+                "socialCreditCode": "${11位随机串}",
+                "streetCode": "6312",
+                "streetName": "三诡街道",
+                "supplierCode": "${uuid}",
+                "supplierName": "${11位随机串}",
+                "supplierType": "1",
+                "taxNo": "1932000${11位随机串}",
+                "zipCode": "236574"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查厂家资料建档申请",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from supplier where supplier_name='${11位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查厂家资料建档申请}",
+              "${1}"
+            ]
+          },
+          {
+            "name": "查询供应商列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/supplier?",
+              "data": null,
+              "params": {
+                "page": "1",
+                "pageSize": "20",
+                "taxNo": "1932000${11位随机串}"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "supplierName": "${11位随机串}",
+                      "socialCreditCode": "${11位随机串}",
+                      "taxNo": "1932000${11位随机串}",
+                      "bank": "中国建设${11位随机串}",
+                      "bankAccount": "62160017${11位随机串}",
+                      "legalPerson": "${11位随机串}",
+                      "level": 2,
+                      "supplierCode": "${uuid}",
+                      "countryCode": "CN",
+                      "countryName": "中国",
+                      "regionCode": "330503",
+                      "regionName": "南浔区",
+                      "provinceCode": "33",
+                      "provinceName": "浙江省",
+                      "cityCode": "3305",
+                      "cityName": "湖州市",
+                      "countyCode": "330521",
+                      "countyName": "${11位随机串}",
+                      "streetCode": "6312",
+                      "streetName": "三诡街道",
+                      "zipCode": "236574",
+                      "addressDetail": "浙江省湖州${11位随机串}",
+                      "phone": "${11位随机串}",
+                      "contact": "${11位随机串}",
+                      "supplierType": "1",
+                      "auditStatus": "CREATED",
+                      "status": "1",
+                      "remark": ""
+                    }
+                  ],
+                  "total": "1",
+                  "size": "20",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "按taxNo+tenantId查询供应商列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "新建子供应商",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/supplier/son",
+              "data": null,
+              "req_json": {
+                "addressDetail": "浙江省湖州${11位随机串}",
+                "bank": "中国建设${11位随机串}",
+                "bankAccount": "62160017${11位随机串}",
+                "bankOwnerName": "曹玲玲",
+                "cityCode": "3305",
+                "cityName": "湖州市",
+                "contact": "${11位随机串}",
+                "countryCode": "CN",
+                "countryName": "中国",
+                "countyCode": "330521",
+                "countyName": "${11位随机串}",
+                "legalPerson": "${11位随机串}",
+                "legalPersonId": "110101199003078451",
+                "phone": "${11位随机串}",
+                "provinceCode": "33",
+                "provinceName": "浙江省",
+                "regionCode": "330503",
+                "regionName": "南浔区",
+                "socialCreditCode": "${11位随机串}",
+                "streetCode": "6312",
+                "streetName": "三诡街道",
+                "supplierCode": "${uuid}",
+                "supplierName": "${11位随机串}",
+                "supplierType": "1",
+                "taxNo": "1932000${11位随机串}",
+                "zipCode": "236574"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查厂家资料建档申请",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from supplier where supplier_name='${11位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查厂家资料建档申请}",
+              "${1}"
+            ]
+          },
+          {
+            "name": "查询供应商列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/supplier?",
+              "data": null,
+              "params": {
+                "page": "1",
+                "pageSize": "20",
+                "tenantId": "${token认证}[resp][json][data][tenantId]",
+                "taxNo": "1932000${11位随机串}"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "supplierName": "${11位随机串}",
+                      "socialCreditCode": "${11位随机串}",
+                      "taxNo": "1932000${11位随机串}",
+                      "bank": "中国建设${11位随机串}",
+                      "bankAccount": "62160017${11位随机串}",
+                      "legalPerson": "${11位随机串}",
+                      "level": 2,
+                      "supplierCode": "${uuid}",
+                      "countryCode": "CN",
+                      "countryName": "中国",
+                      "regionCode": "330503",
+                      "regionName": "南浔区",
+                      "provinceCode": "33",
+                      "provinceName": "浙江省",
+                      "cityCode": "3305",
+                      "cityName": "湖州市",
+                      "countyCode": "330521",
+                      "countyName": "${11位随机串}",
+                      "streetCode": "6312",
+                      "streetName": "三诡街道",
+                      "zipCode": "236574",
+                      "addressDetail": "浙江省湖州${11位随机串}",
+                      "phone": "${11位随机串}",
+                      "contact": "${11位随机串}",
+                      "supplierType": "1",
+                      "auditStatus": "CREATED",
+                      "status": "1",
+                      "remark": ""
+                    }
+                  ],
+                  "total": "1",
+                  "size": "20",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "按taxNo+tenantName查询供应商列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "新建子供应商",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/supplier/son",
+              "data": null,
+              "req_json": {
+                "addressDetail": "浙江省湖州${11位随机串}",
+                "bank": "中国建设${11位随机串}",
+                "bankAccount": "62160017${11位随机串}",
+                "bankOwnerName": "曹玲玲",
+                "cityCode": "3305",
+                "cityName": "湖州市",
+                "contact": "${11位随机串}",
+                "countryCode": "CN",
+                "countryName": "中国",
+                "countyCode": "330521",
+                "countyName": "${11位随机串}",
+                "legalPerson": "${11位随机串}",
+                "legalPersonId": "110101199003078451",
+                "phone": "${11位随机串}",
+                "provinceCode": "33",
+                "provinceName": "浙江省",
+                "regionCode": "330503",
+                "regionName": "南浔区",
+                "socialCreditCode": "${11位随机串}",
+                "streetCode": "6312",
+                "streetName": "三诡街道",
+                "supplierCode": "${uuid}",
+                "supplierName": "${11位随机串}",
+                "supplierType": "1",
+                "taxNo": "1932000${11位随机串}",
+                "zipCode": "236574"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查厂家资料建档申请",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from supplier where supplier_name='${11位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查厂家资料建档申请}",
+              "${1}"
+            ]
+          },
+          {
+            "name": "查询供应商列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/supplier?",
+              "data": null,
+              "params": {
+                "page": "1",
+                "pageSize": "20",
+                "tenantName": "${token认证}[resp][json][data][tenantName]",
+                "taxNo": "1932000${11位随机串}"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "supplierName": "${11位随机串}",
+                      "socialCreditCode": "${11位随机串}",
+                      "taxNo": "1932000${11位随机串}",
+                      "bank": "中国建设${11位随机串}",
+                      "bankAccount": "62160017${11位随机串}",
+                      "legalPerson": "${11位随机串}",
+                      "level": 2,
+                      "supplierCode": "${uuid}",
+                      "countryCode": "CN",
+                      "countryName": "中国",
+                      "regionCode": "330503",
+                      "regionName": "南浔区",
+                      "provinceCode": "33",
+                      "provinceName": "浙江省",
+                      "cityCode": "3305",
+                      "cityName": "湖州市",
+                      "countyCode": "330521",
+                      "countyName": "${11位随机串}",
+                      "streetCode": "6312",
+                      "streetName": "三诡街道",
+                      "zipCode": "236574",
+                      "addressDetail": "浙江省湖州${11位随机串}",
+                      "phone": "${11位随机串}",
+                      "contact": "${11位随机串}",
+                      "supplierType": "1",
+                      "auditStatus": "CREATED",
+                      "status": "1",
+                      "remark": ""
+                    }
+                  ],
+                  "total": "1",
+                  "size": "20",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

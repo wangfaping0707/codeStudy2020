@@ -1,0 +1,124 @@
+[
+  {
+    "name": "keywords-settle-templates",
+    "doc": "一站式入驻流程模板测试关键字集合",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-settle-template",
+        "args": [
+          "${serviceCode}"
+        ],
+        "steps": [
+          {
+            "name": "uuid",
+            "doc": "获取uuid",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "create-settle-template",
+            "doc": "创建一站式入驻流程模板",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/settle/templates",
+              "req_json": {
+                "attributes": [
+                  {
+                    "attributeCode": "${uuid}",
+                    "attributeName": "${uuid}",
+                    "enabled": true,
+                    "expect": "${uuid}",
+                    "pattern": "",
+                    "readonly": true,
+                    "required": true,
+                    "unique": true
+                  }
+                ],
+                "pageIndex": 0,
+                "rawProperties": "",
+                "serviceCodes": [
+                  "${serviceCode}"
+                ],
+                "templateCode": "${uuid}",
+                "templateName": "${uuid}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-page-settle-template",
+        "doc": "一站式入驻流程模板分页查询关键字",
+        "steps": [
+          {
+            "name": "page-settle-template",
+            "doc": "一站式入驻流程模板分页查询",
+            "type": "http",
+            "input": {
+              "url": "${url}/api/global${version}/settle/templates",
+              "method": "GET",
+              "params": {
+                "row": "1"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-info-settle-template",
+        "doc": "根据id获取一站式入驻流程模板关键字",
+        "args": [
+          "${templateId}"
+        ],
+        "steps": [
+          {
+            "name": "info-settle-template",
+            "doc": "根据id获取一站式入驻流程模板",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/settle/templates/${templateId}",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-delete-settle-template",
+        "doc": "删除一站式入驻流程模板关键字",
+        "args": [
+          "${templateId}"
+        ],
+        "steps": [
+          {
+            "name": "delete-settle-template",
+            "doc": "删除一站式入驻流程模板",
+            "type": "http",
+            "input": {
+              "method": "DELETE",
+              "url": "${url}/api/global${version}/settle/templates/${templateId}",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

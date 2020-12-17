@@ -1,0 +1,22 @@
+[
+  {
+    "name": "keywords-uuid",
+    "keywords": [
+      {
+        "name": "kw-uuid",
+        "doc": "创建uuid的keyword",
+        "steps": [
+          {
+            "name": "uuid",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "''.join(str(uuid.uuid1()).split('-'))",
+              "modules=uuid"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

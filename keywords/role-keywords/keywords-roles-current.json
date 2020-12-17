@@ -1,0 +1,53 @@
+[
+  {
+    "name": "create_role_keyword",
+    "keywords": [
+      {
+        "name": "清理数据",
+        "args": [
+          "${roleCode}",
+          "${数据库配置}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_role where role_code='${roleCode}' or role_name='${roleCode}'"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "create_role_fun",
+        "args": [
+          "${roleCode}",
+          "${url}",
+          "${version}",
+          "${token}"
+        ],
+        "steps": [
+          {
+            "name": "新建角色",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/current${version}/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "roleCode": "${roleCode}",
+                "roleDesc": "${roleCode}",
+                "roleName": "${roleCode}",
+                "status": 1
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

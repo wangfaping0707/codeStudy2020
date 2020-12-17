@@ -1,0 +1,183 @@
+[
+  {
+    "name": "主流程",
+    "variableFiles": [
+      "4.0的token",
+      "创建租户",
+      "创建组织",
+      "创建服务包",
+      "创建角色"
+    ],
+    "keywords": [
+      {
+        "name": "创建主流程",
+        "doc": "用户中心的主流程服务，创建租户，组织，公司，服务包，角色等信息，绑定公司和服务包，绑定角色和权限，绑定用户和角色",
+        "args": [
+          "${数据库配置}",
+          "${org_dict_jituan}",
+          "${org_dict_company}",
+          "${company_dict}",
+          "${tenant_dict}",
+          "${user_dict}",
+          "${taxNum}",
+          "${url}",
+          "${version}",
+          "${login_url}",
+          "${user email}",
+          "${user password}",
+          "${servicePackageName}",
+          "${roleCode}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from bss_tenant where tenant_code='${tenant_dict}[code]' or tenant_name='${tenant_dict}[name]'",
+              "delete from bss_company where company_code='${company_dict}[code]' or company_name='${company_dict}[name]' or tax_num='${taxNum}'",
+              "delete from sys_user where account_id in (select account_id from sys_sass_account where email='${user_dict}[email]' or tel_phone='${user_dict}[telphone]')",
+              "delete from sys_sass_account where email='${user_dict}[email]' or tel_phone='${user_dict}[telphone]'",
+              "delete from sys_org_struct where org_code='${org_dict_jituan}[code]' or org_name='${org_dict_jituan}[name]' or org_desc='${org_dict_jituan}[desc]'",
+              "delete from sys_org_struct where org_code='${org_dict_company}[code]' or org_name='${org_dict_company}[name]' or org_desc='${org_dict_company}[desc]'",
+              "delete from sys_service_api where service_api_name='serviceApiName' or service_api_path='serviceApiName'",
+              "delete from sys_resource where resource_code='resourceCodeTest' or resource_name ='resourceCodeTest'",
+              "delete from sys_resourceset where resourceset_name='resourcesetName' or resourceset_desc='resourcesetName'",
+              "delete from bss_service_package where service_package_name ='${servicePackageName}' or service_package_desc='${servicePackageName}'",
+              "delete from sys_role where role_code='${roleCode}' or role_name='${roleCode}'"
+            ]
+          },
+          {
+            "name": "登录",
+            "keyword": "获取token",
+            "type": "keyword",
+            "params": [
+              "${login_url}",
+              "${user email}",
+              "${user password}"
+            ]
+          },
+          {
+            "name": "新建租户",
+            "keyword": "新建租户",
+            "type": "keyword",
+            "params": [
+              "${company_dict}",
+              "${tenant_dict}",
+              "${user_dict}",
+              "${taxNum}",
+              "${url}",
+              "${version}",
+              "${token['${user email}']}"
+            ]
+          },
+          {
+            "name": "新增组织-集团",
+            "keyword": "新增组织-集团",
+            "type": "keyword",
+            "params": [
+              "${org_dict_jituan}",
+              "${url}",
+              "${version}",
+              "${新建租户}[resp][json][result][tenant][tenantId]",
+              "${token['${user email}']}"
+            ]
+          },
+          {
+            "name": "新增组织-公司",
+            "keyword": "新增组织-公司",
+            "type": "keyword",
+            "params": [
+              "${taxNum}",
+              "${company_dict}",
+              "${url}",
+              "${version}",
+              "${org_dict_company}",
+              "${新增组织-集团}[resp][json][result][orgId]",
+              "${新建租户}[resp][json][result][tenant][tenantId]",
+              "${token['${user email}']}"
+            ]
+          },
+          {
+            "name": "新建服务包",
+            "keyword": "创建服务包",
+            "type": "keyword",
+            "params": [
+              "${url}",
+              "${version}",
+              "${token['${user email}']}",
+              "${servicePackageName}"
+            ]
+          },
+          {
+            "name": "公司绑定服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/${新建租户}[resp][json][result][tenant][tenantId]${version}/companies/${新建租户}[resp][json][result][company][companyId]/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "overwrite": true,
+                "packageIds": [
+                  "${新建服务包}[resp][json][result][servicePackageId]"
+                ]
+              },
+              "req_headers": "${token['${user email}']}",
+              "timeout": null
+            }
+          },
+          {
+            "name": "新建角色",
+            "keyword": "创建角色",
+            "type": "keyword",
+            "params": [
+              "${roleCode}",
+              "${url}",
+              "${新建租户}[resp][json][result][tenant][tenantId]",
+              "${version}",
+              "${token['${user email}']}"
+            ]
+          },
+          {
+            "name": "角色绑定功能集",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/roles/${新建角色}[resp][json][result][id]/resource-sets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "overwrite": true,
+                "resourcesetIds": [
+                  "${新建功能集}[resp][json][result][resourcesetId]"
+                ]
+              },
+              "req_headers": "${token['${user email}']}",
+              "timeout": null
+            }
+          },
+          {
+            "name": "用户绑定角色",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/users/${新建租户}[resp][json][result][user][id]/roles",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "overwrite": true,
+                "roleIds": [
+                  "${新建角色}[resp][json][result][id]",
+                  1
+                ]
+              },
+              "req_headers": "${token['${user email}']}",
+              "timeout": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

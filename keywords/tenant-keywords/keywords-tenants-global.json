@@ -1,0 +1,59 @@
+[
+  {
+    "name": "keywords-tenants",
+    "doc": "创建租户",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-taxNum",
+      "keywords-uuid"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-tenant",
+        "doc": "创建租户",
+        "steps": [
+          {
+            "name": "uuid",
+            "doc": "获取uuid",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "taxNum",
+            "doc": "获取税号",
+            "type": "keyword",
+            "keyword": "kw-taxNum"
+          },
+          {
+            "name": "create-tenant",
+            "doc": "新建租户",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/tenants",
+              "req_json": {
+                "company": {
+                  "companyName": "${uuid}",
+                  "taxNum": "${taxNum}"
+                },
+                "tenantCode": "${uuid}",
+                "tenantDesc": "${uuid}",
+                "tenantName": "${uuid}",
+                "user": {
+                  "account": {
+                    "email": "${uuid}@xforceplus.com",
+                    "password": "Ab123456"
+                  },
+                  "userCode": "${uuid}",
+                  "userType": 1
+                }
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

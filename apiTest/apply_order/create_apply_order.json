@@ -1,0 +1,207 @@
+[
+  {
+    "name": "新建预约收货单",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "正向新建预约收货单提交成功",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询品牌方",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/brand/infos?page=1&pageSize=2",
+              "data": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "新建商品",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/product",
+              "data": null,
+              "req_json": {
+                "barCode": "${11位随机串}",
+                "bizType": "1",
+                "brandCode": "${查询品牌方}[resp][json][result][records][0][brandCode]",
+                "category3Code": "10000442",
+                "currencyType": "CNY",
+                "isCross": "0",
+                "orgin": "China",
+                "productCode": "${11位随机串}",
+                "productName": "${11位随机串}",
+                "productPicUrl": "www.baidu.com/",
+                "salePrice": 1789.6519,
+                "settlementPrice": 1789.6519,
+                "spec": "150*80*170",
+                "suggestPrice": 1900.65,
+                "unit": "个"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "UPDATE product set audit_status='PASS' where product_code in ('${新建商品}[resp][json][result]')"
+            ]
+          },
+          {
+            "name": "查询商品列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/product/items",
+              "params": {
+                "pCode": "${pCode}"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "新建预约收货单",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${eccp}/api/eccp/v1/apply_order",
+              "req_json": {
+                "amount": 75269.5353,
+                "items": [
+                  {
+                    "amount": 75269.5353,
+                    "num": 17,
+                    "productCode": "${新建商品}[resp][json][result]",
+                    "productId": "${查询商品列表}[resp][json][result][records][0][productId]",
+                    "productName": "${11位随机串}",
+                    "remark": "${11位随机串}"
+                  }
+                ],
+                "num": 17,
+                "purchaserCode": "${新建商品}[resp][json][result]",
+                "remark": "${11位随机串}",
+                "shopCode": "sp3001",
+                "shopName": "新河饭店-杭州店",
+                "status": "CREATED",
+                "supplierCode": "g5009"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "检查商品表入库数量",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from product where product_code ='${新建商品}[resp][json][result]'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查商品表入库数量}",
+              "${1}"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

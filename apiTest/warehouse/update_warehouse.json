@@ -1,0 +1,259 @@
+[
+  {
+    "name": "修改仓库",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "正向修改仓库",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "12位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,999999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "正向新建仓库",
+            "type": "http",
+            "input": {
+              "method": "PUT",
+              "url": "${eccp}/api/eccp/v1/warehouse",
+              "data": null,
+              "req_json": {
+                "addressDetail": "${11位随机串}",
+                "cityCode": "${11位随机串}",
+                "cityName": "${11位随机串}",
+                "countryCode": "${11位随机串}",
+                "countryName": "${11位随机串}",
+                "countyCode": "${11位随机串}",
+                "countyName": "${11位随机串}",
+                "phone": "${11位随机串}",
+                "provinceCode": "${11位随机串}",
+                "provinceName": "${11位随机串}",
+                "regionCode": "${11位随机串}",
+                "regionName": "${11位随机串}",
+                "remark": "${11位随机串}",
+                "status": "1",
+                "streetCode": "${11位随机串}",
+                "streetName": "${11位随机串}",
+                "supplierCode": "${11位随机串}",
+                "supplierName": "温州五色金属有限公司",
+                "tenantId": "${token认证}[resp][json][data][tenantId]",
+                "tenantName": "${token认证}[resp][json][data][tenantName]",
+                "warehouseName": "${11位随机串}",
+                "zipCode": "RG10001"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "正向查询仓库列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/warehouse/items?warehouseName=${11位随机串}&page=1&pageSize=20",
+              "data": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "warehouseName": "${11位随机串}"
+                    }
+                  ],
+                  "total": "1",
+                  "size": "20",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "正向修改仓库",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/warehouse",
+              "data": null,
+              "req_json": {
+                "id": "${正向查询仓库列表}[resp][json][result][records][0][warehouseId]",
+                "addressDetail": "${12位随机串}",
+                "cityCode": "${12位随机串}",
+                "cityName": "${12位随机串}",
+                "countryCode": "${12位随机串}",
+                "countryName": "${12位随机串}",
+                "countyCode": "${12位随机串}",
+                "countyName": "${12位随机串}",
+                "phone": "${12位随机串}",
+                "provinceCode": "${12位随机串}",
+                "provinceName": "${12位随机串}",
+                "regionCode": "${12位随机串}",
+                "regionName": "${12位随机串}",
+                "remark": "${12位随机串}",
+                "status": "1",
+                "streetCode": "${12位随机串}",
+                "streetName": "${12位随机串}",
+                "supplierCode": "${12位随机串}",
+                "supplierName": "温州五色金属有限公司",
+                "tenantId": "${token认证}[resp][json][data][tenantId]",
+                "tenantName": "${token认证}[resp][json][data][tenantName]",
+                "warehouseName": "${12位随机串}",
+                "zipCode": "RG10001"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "正向查询仓库列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/warehouse/items?warehouseName=${12位随机串}&page=1&pageSize=20",
+              "data": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "warehouseName": "${12位随机串}"
+                    }
+                  ],
+                  "total": "1",
+                  "size": "20",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

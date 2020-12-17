@@ -1,0 +1,91 @@
+[
+  {
+    "name": "keywords-settle-steps",
+    "doc": "一站式入驻流程步骤测试关键字集合",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-taxNum",
+      "keywords-uuid",
+      "keywords-tenants",
+      "keywords-settle-flows"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-settle-steps",
+        "args": [
+          "${companyId}",
+          "${companyName}",
+          "${orgId}",
+          "${orgName}",
+          "${taxNum}",
+          "${tenantId}",
+          "${templateCode}"
+        ],
+        "steps": [
+          {
+            "name": "uuid",
+            "doc": "创建一站式入驻流程",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "create-settle-flow",
+            "doc": "创建一站式入驻流程",
+            "type": "keyword",
+            "keyword": "kw-create-settle-flow",
+            "params": [
+              "${uuid}",
+              "${uuid}",
+              "${true}"
+            ]
+          },
+          {
+            "name": "create-settle-step",
+            "doc": "创建一站式入驻流程步骤",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/settle/flows/${flowId}/step",
+              "req_json": {
+                "companyId": "${companyId}",
+                "companyName": "${companyName}",
+                "orgId": "${orgId}",
+                "orgName": "${orgName}",
+                "paramsJson": "",
+                "stepStatus": 1,
+                "taxNum": "${taxNum}",
+                "templateCode": "${templateCode}",
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-find-settle-step",
+        "args": [
+          "${flowId}",
+          "${taxNum}"
+        ],
+        "steps": [
+          {
+            "name": "find-settle-step",
+            "doc": "一站式入驻流程步骤查询",
+            "type": "http",
+            "input": {
+              "url": "${url}/api/global${version}/settle/flows/{flowId}/step",
+              "method": "GET",
+              "params": {
+                "flowId": "${flowId}",
+                "taxNum": "${taxNum}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

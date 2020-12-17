@@ -1,0 +1,84 @@
+[
+  {
+    "name": "创建租户",
+    "keywords": [
+      {
+        "name": "数据清理",
+        "doc": "创建租户前的数据清理，单独使用'新建租户'keyword前时，需要先调用数据清理的keyword",
+        "args": [
+          "${数据库配置}",
+          "${company_dict}",
+          "${tenant_dict}",
+          "${user_dict}",
+          "${org_dict}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from bss_tenant where tenant_code='${tenant_dict}[code]' or tenant_name='${tenant_dict}[name]'",
+              "delete from bss_company where company_code='${company_dict}[code]' or company_name='${company_dict}[name]' or tax_num='${taxNum}'",
+              "delete from sys_user where account_id in (select account_id from sys_sass_account where email='${user_dict}[email]' or tel_phone='${user_dict}[telphone]')",
+              "delete from sys_sass_account where email='${user_dict}[email]' or tel_phone='${user_dict}[telphone]'",
+              "delete from sys_org_struct where org_code='${org_dict}[code]' or org_name='${org_dict}[name]' or org_desc='${org_dict}[desc]'"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "新建租户",
+        "doc": "使用前需要清除 bss_tenant,bss_company,sys_user,sys_sass_account的数据",
+        "args": [
+          "${company_dict}",
+          "${tenant_dict}",
+          "${user_dict}",
+          "${taxNum}",
+          "${url}",
+          "${version}",
+          "${token}"
+        ],
+        "steps": [
+          {
+            "name": "新建租户",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/tenants",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "company": {
+                  "companyName": "${company_dict}[name]",
+                  "taxNum": "${taxNum}"
+                },
+                "status": 1,
+                "tenantCode": "${tenant_dict}[code]",
+                "tenantDesc": "${tenant_dict}[name]",
+                "tenantName": "${tenant_dict}[name]",
+                "user": {
+                  "account": {
+                    "email": "${user_dict}[email]",
+                    "password": "Ab123456",
+                    "status": 1,
+                    "telPhone": "${user_dict}[telphone]",
+                    "username": "${user_dict}[telphone]"
+                  },
+                  "userCode": "userCode",
+                  "userEmailAddr": "${user_dict}[email]",
+                  "userName": "${user_dict}[telphone]",
+                  "userNumber": "${user_dict}[telphone]",
+                  "userPhone": "${user_dict}[telphone]",
+                  "userType": 1
+                }
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,79 @@
+[
+  {
+    "name": "keywords-orgs-global",
+    "doc": "创建组织",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-taxNum",
+      "keywords-uuid",
+      "keywords-tenants-global"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-org",
+        "doc": "创建组织",
+        "args": [
+          "${tenantId}"
+        ],
+        "steps": [
+          {
+            "name": "uuid",
+            "doc": "获取uuid",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "taxNum",
+            "doc": "获取税号",
+            "type": "keyword",
+            "keyword": "kw-taxNum"
+          },
+          {
+            "name": "create-org",
+            "doc": "新建组织",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/orgs",
+              "req_json": {
+                "company": {
+                  "companyCode": "${uuid}",
+                  "companyName": "${uuid}",
+                  "taxNum": "${taxNum}"
+                },
+                "tenantId": "${tenantId}",
+                "orgName": "${uuid}",
+                "orgCode": "${uuid}",
+                "orgType": "1"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-org-tree",
+        "doc": "获取组织树",
+        "args": [
+          "${tenantId}"
+        ],
+        "steps": [
+          {
+            "name": "org-tree",
+            "doc": "获取组织树",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/orgs/tree",
+              "params": {
+                "tenantId": "${tenantId}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,155 @@
+[
+  {
+    "name": "测试用例初始化",
+    "keywords": [
+      {
+        "name": "创建API",
+        "args": [
+          "${url}",
+          "${version}",
+          "${token}",
+          "${serviceApiName}"
+        ],
+        "steps": [
+          {
+            "name": "新建服务API",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/service-apis",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isSkipAuth": 0,
+                "isSkipCheck": 0,
+                "requestMethod": "GET",
+                "routeId": 1,
+                "serviceApiName": "${serviceApiName}",
+                "serviceApiPath": "${serviceApiName}",
+                "serviceApiUrl": "http://baidu.com",
+                "status": 0
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "创建资源码",
+        "args": [
+          "${url}",
+          "${version}",
+          "${token}",
+          "${code}",
+          "${name}"
+        ],
+        "steps": [
+          {
+            "name": "新增资源码",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resources",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "isServicePackage": true,
+                "parentId": 0,
+                "resourceCode": "${code}",
+                "resourceName": "${name}",
+                "resourcePlatform": 0,
+                "resourceType": 0,
+                "status": 1
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "创建功能集",
+        "args": [
+          "${url}",
+          "${version}",
+          "${token}",
+          "${code}",
+          "${name}",
+          "${resourceId}",
+          "${appId}"
+        ],
+        "steps": [
+          {
+            "name": "新建功能集",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/resourcesets",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "bindResources": {
+                  "overwrite": true,
+                  "resourceIds": [
+                    "${resourceId}"
+                  ]
+                },
+                "appId": "1",
+                "resourceId": "${resourceId}",
+                "resourcesetDesc": "${name}",
+                "resourcesetName": "${name}",
+                "resourcesetCode": "${code}",
+                "status": 1
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "创建产品服务包",
+        "args": [
+          "${url}",
+          "${version}",
+          "${token}",
+          "${appId}",
+          "${servicePackageCode}",
+          "${servicePackageName}",
+          "${status}",
+          "${resourcesetIds}"
+        ],
+        "steps": [
+          {
+            "name": "创建产品服务包",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/packages",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "appId": "1",
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${resourcesetIds}"
+                  ]
+                },
+                "servicePackageDesc": "${servicePackageName}",
+                "servicePackageName": "${servicePackageName}",
+                "servicePackageCode": "${servicePackageCode}",
+                "status": 1
+              },
+              "req_headers": "${token}",
+              "timeout": null
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

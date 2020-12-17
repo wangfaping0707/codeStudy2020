@@ -1,0 +1,64 @@
+[
+  {
+    "name": "keywords-roles",
+    "doc": "角色关键字",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-taxNum",
+      "keywords-uuid",
+      "keywords-tenants"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-role",
+        "doc": "创建角色",
+        "args": [
+          "${resourcesetId}"
+        ],
+        "steps": [
+          {
+            "name": "uuid",
+            "doc": "获取uuid",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "taxNum",
+            "doc": "获取税号",
+            "type": "keyword",
+            "keyword": "kw-taxNum"
+          },
+          {
+            "name": "create-tenant",
+            "doc": "新建租户",
+            "type": "keyword",
+            "keyword": "kw-create-tenant"
+          },
+          {
+            "name": "create-role",
+            "doc": "新建角色",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/roles",
+              "req_json": {
+                "bindResourceSets": {
+                  "overwrite": true,
+                  "resourcesetIds": [
+                    "${resourcesetId}"
+                  ]
+                },
+                "roleCode": "${uuid}",
+                "roleDesc": "${uuid}",
+                "roleName": "${uuid}",
+                "tenantId": "${create-tenant}[resp][json][result][tenant][tenantId]"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

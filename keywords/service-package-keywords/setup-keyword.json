@@ -1,0 +1,65 @@
+[
+  {
+    "name": "产品服务包测试初始化",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "功能集测试初始化"
+    ],
+    "keywords": [
+      {
+        "name": "产品服务包测试--创建产品服务包",
+        "args": [
+          "${url}",
+          "${version}",
+          "${token}",
+          "${appId}",
+          "${servicePackageCode}",
+          "${servicePackageName}",
+          "${status}"
+        ],
+        "steps": [
+          {
+            "name": "初始化sql",
+            "type": "mysql-update",
+            "config": "${数据库配置}",
+            "sql": [
+              "delete from sys_resourceset where resourceset_code = 'resourcesetCode_service'",
+              "delete from sys_resource where resource_code = 'resourceCode_service'"
+            ]
+          },
+          {
+            "name": "创建功能集",
+            "type": "keyword",
+            "keyword": "功能集测试--创建功能集",
+            "params": [
+              "${url}",
+              "${version}",
+              "${token}",
+              "resourceCode_service",
+              "resourceName_service",
+              "resourcesetCode_service",
+              "resourcesetName_service",
+              "${appId}"
+            ]
+          },
+          {
+            "name": "创建产品服务包",
+            "type": "keyword",
+            "keyword": "创建产品服务包",
+            "params": [
+              "${url}",
+              "${version}",
+              "${token}",
+              "${appId}",
+              "${servicePackageCode}",
+              "${servicePackageName}",
+              "${status}",
+              "${创建功能集}[resp][json][result][resourcesetId]"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

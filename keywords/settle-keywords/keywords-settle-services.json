@@ -1,0 +1,106 @@
+[
+  {
+    "name": "keywords-settle-services",
+    "doc": "一站式入驻流程服务测试关键字集合",
+    "variableFiles": [
+      "4.0的token",
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "keywords": [
+      {
+        "name": "kw-create-settle-service",
+        "steps": [
+          {
+            "name": "uuid",
+            "doc": "获取uuid",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "create-settle-service",
+            "doc": "创建一站式入驻流程服务",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${url}/api/global${version}/settle/services",
+              "req_json": {
+                "serviceCode": "${uuid}",
+                "serviceName": "${uuid}",
+                "submitUrl": "http://${uuid}",
+                "validateUrl": "http://${uuid}"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-page-settle-service",
+        "doc": "一站式入驻流程服务分页查询关键字",
+        "steps": [
+          {
+            "name": "page-settle-service",
+            "doc": "一站式入驻流程服务分页查询",
+            "type": "http",
+            "input": {
+              "url": "${url}/api/global${version}/settle/services",
+              "method": "GET",
+              "params": {
+                "row": "1"
+              },
+              "req_headers": "${token['${user1 email}']}"
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-info-settle-service",
+        "doc": "根据id获取一站式入驻流程服务关键字",
+        "args": [
+          "${serviceId}"
+        ],
+        "steps": [
+          {
+            "name": "info-settle-service",
+            "doc": "根据id获取一站式入驻流程服务",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${url}/api/global${version}/settle/services/${serviceId}",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      },
+      {
+        "name": "kw-delete-settle-service",
+        "doc": "删除一站式入驻流程服务关键字",
+        "args": [
+          "${serviceId}"
+        ],
+        "steps": [
+          {
+            "name": "delete-settle-service",
+            "doc": "删除一站式入驻流程服务",
+            "type": "http",
+            "input": {
+              "method": "DELETE",
+              "url": "${url}/api/global${version}/settle/services/${serviceId}",
+              "req_headers": "${token['${user1 email}']}"
+            },
+            "expect": {
+              "expect_status_code": 200
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

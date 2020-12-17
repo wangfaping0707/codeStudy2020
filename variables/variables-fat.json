@@ -1,0 +1,26 @@
+{
+  "name": "测试数据",
+  "variables": {
+    "login_url": "http://paas-t.xforceplus.com/api/normal/login",
+    "login_secret_url": "http://paas-t.xforceplus.com/api/client/login",
+    "eccp": "http://eccp-supplier-portal.phoenix-t.xforceplus.com",
+    "ant_url": "http://ant-t.xforceplus.com",
+    "host": "http://paas-t.xforceplus.com",
+    "url": "https://paas-t.xforceplus.com",
+    "url2": "http://xforce-gateway.paas-t.xforceplus.com",
+    "url3": "http://assist-fat.phoenix-t.xforceplus.com",
+    "user-center-app-url": "http://user-center-app.phoenix-t.xforceplus.com",
+    "version": "/v2",
+    "数据库配置": {
+      "host": "rm-bp15ho0iqu764n7ky323.mysql.rds.aliyuncs.com",
+      "port": "3306",
+      "user": "xdom_test02",
+      "password": "4zR3ZrE0NEEqV9QBD03bzqhtqDevY_",
+      "db": "eccp_supplier_portal"
+    },
+    "user1 email": "liuying008@bccto.me",
+    "user1 password": "aB123456",
+    "pCode":"110000000"
+  }
+}
+

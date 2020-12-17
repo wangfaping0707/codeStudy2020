@@ -1,0 +1,179 @@
+[
+  {
+    "name": "供应商退场申请",
+    "variableFiles": [
+      "测试数据",
+      "keywords-uuid"
+    ],
+    "case": [
+      {
+        "name": "正向供应商退场申请",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "新建子供应商",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/supplier/son",
+              "data": null,
+              "req_json": {
+                "addressDetail": "浙江省湖州${11位随机串}",
+                "bank": "中国建设${11位随机串}",
+                "bankAccount": "62160017${11位随机串}",
+                "bankOwnerName": "曹玲玲",
+                "cityCode": "3305",
+                "cityName": "湖州市",
+                "contact": "${11位随机串}",
+                "countryCode": "CN",
+                "countryName": "中国",
+                "countyCode": "330521",
+                "countyName": "${11位随机串}",
+                "legalPerson": "${11位随机串}",
+                "legalPersonId": "110101199003078451",
+                "phone": "${11位随机串}",
+                "provinceCode": "33",
+                "provinceName": "浙江省",
+                "regionCode": "330503",
+                "regionName": "南浔区",
+                "socialCreditCode": "${11位随机串}",
+                "streetCode": "6312",
+                "streetName": "三诡街道",
+                "supplierCode": "g96502",
+                "supplierName": "${11位随机串}",
+                "supplierType": "1",
+                "taxNo": "1932000${11位随机串}",
+                "zipCode": "236574"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          },
+          {
+            "name": "检查厂家资料建档申请",
+            "type": "mysql",
+            "input": {
+              "sql": "select * from supplier where supplier_name='${11位随机串}'",
+              "config": "${数据库配置}"
+            }
+          },
+          {
+            "name": "sql断言",
+            "type": "rft",
+            "keyword": "length_should_be",
+            "params": [
+              "${检查厂家资料建档申请}",
+              "${1}"
+            ]
+          },
+          {
+            "name": "供应商退场申请",
+            "type": "http",
+            "input": {
+              "method": "POST",
+              "url": "${eccp}/api/eccp/v1/supplier_exit_apply",
+              "data": null,
+              "req_json": {
+                "exitApplyTime": "2022-12-09 01:00:54",
+                "remark": "${11位随机串}",
+                "tenantId": "${token认证}[resp][json][data][tenantId]"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
