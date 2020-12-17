@@ -7,7 +7,7 @@
     ],
     "case": [
       {
-        "name": "查询差异单列表",
+        "name": "diffOrderNo查询差异单列表",
         "steps": [
           {
             "name": "11位随机串",
@@ -50,11 +50,34 @@
             }
           },
           {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
             "name": "查询差异单列表",
             "type": "http",
             "input": {
               "method": "GET",
-              "url": "${eccp}/api/eccp/v1/difference_order?pageNo=1&pageSize=10",
+              "url": "${eccp}/api/eccp/v1/difference_order?pageNo=1&pageSize=1",
               "data": null,
               "req_headers": {
                 "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
@@ -68,6 +91,458 @@
               "expect_resp_body": null,
               "expect_resp_json": null,
               "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "diffOrderNo查询差异单列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/difference_order?",
+              "params": {
+                "pageNo": "1",
+                "pageSize": "1",
+                "diffOrderNo": "${查询差异单列表}[resp][json][result][records][0][diffOrderNo]"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "id": "${查询差异单列表}[resp][json][result][records][0][id]",
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "diffOrderNo": "${查询差异单列表}[resp][json][result][records][0][diffOrderNo]",
+                      "shopId": "${查询差异单列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询差异单列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询差异单列表}[resp][json][result][records][0][shopName]",
+                      "status": "${查询差异单列表}[resp][json][result][records][0][status]"
+                    }
+                  ],
+                  "total": "1",
+                  "size": "1",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "shopCode查询差异单列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询差异单列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/difference_order?pageNo=1&pageSize=1",
+              "data": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "shopCode查询差异单列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/difference_order?",
+              "params": {
+                "pageNo": "1",
+                "pageSize": "1",
+                "shopCode": "${查询差异单列表}[resp][json][result][records][0][shopCode]"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "id": "${查询差异单列表}[resp][json][result][records][0][id]",
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "diffOrderNo": "${查询差异单列表}[resp][json][result][records][0][diffOrderNo]",
+                      "shopId": "${查询差异单列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询差异单列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询差异单列表}[resp][json][result][records][0][shopName]",
+                      "status": "${查询差异单列表}[resp][json][result][records][0][status]"
+                    }
+                  ],
+                  "total": "1",
+                  "size": "1",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "组合查询差异单列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询差异单列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/difference_order?pageNo=1&pageSize=1",
+              "data": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "组合查询差异单列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/difference_order?",
+              "params": {
+                "pageNo": "1",
+                "pageSize": "1",
+                "shopCode": "${查询差异单列表}[resp][json][result][records][0][shopCode]",
+                "diffOrderNo": "${查询差异单列表}[resp][json][result][records][0][diffOrderNo]"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "id": "${查询差异单列表}[resp][json][result][records][0][id]",
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "diffOrderNo": "${查询差异单列表}[resp][json][result][records][0][diffOrderNo]",
+                      "shopId": "${查询差异单列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询差异单列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询差异单列表}[resp][json][result][records][0][shopName]",
+                      "status": "${查询差异单列表}[resp][json][result][records][0][status]"
+                    }
+                  ],
+                  "total": "1",
+                  "size": "1",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "diffOrderNo查询差异单列表",
+        "steps": [
+          {
+            "name": "11位随机串",
+            "type": "rft",
+            "keyword": "evaluate",
+            "params": [
+              "random.randint(0,99999999999)",
+              "modules=random"
+            ]
+          },
+          {
+            "name": "uuid",
+            "doc": "生成随机串",
+            "type": "keyword",
+            "keyword": "kw-uuid"
+          },
+          {
+            "name": "登录",
+            "type": "http",
+            "input": {
+              "method": "PoSt",
+              "url": "${login_url}",
+              "params": null,
+              "data": null,
+              "req_json": {
+                "username": "liuying008@bccto.me",
+                "password": "vgzQ2KHLn7+3CO5fR7gB/Q=="
+              },
+              "req_headers": {
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "token认证",
+            "type": "http",
+            "input": {
+              "method": "get",
+              "url": "${url}/api/authorized-user",
+              "params": null,
+              "data": null,
+              "req_json": null,
+              "req_headers": {
+                "xforce-saas-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_body_contains": null
+            }
+          },
+          {
+            "name": "查询差异单列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/difference_order?pageNo=1&pageSize=1",
+              "data": null,
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": null
+            }
+          },
+          {
+            "name": "diffOrderNo查询差异单列表",
+            "type": "http",
+            "input": {
+              "method": "GET",
+              "url": "${eccp}/api/eccp/v1/difference_order?",
+              "params": {
+                "pageNo": "1",
+                "pageSize": "1",
+                "diffOrderNo": "${查询差异单列表}[resp][json][result][records][0][diffOrderNo]"
+              },
+              "req_headers": {
+                "x-access-token": "${登录}[resp][json][data][xforce-saas-token]",
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              "timeout": null
+            },
+            "expect": {
+              "expect_status_code": 200,
+              "expect_resp_headers": null,
+              "expect_resp_body": null,
+              "expect_resp_json": null,
+              "expect_resp_json_contains": {
+                "code": 1,
+                "success": true,
+                "result": {
+                  "records": [
+                    {
+                      "id": "${查询差异单列表}[resp][json][result][records][0][id]",
+                      "tenantId": "${token认证}[resp][json][data][tenantId]",
+                      "tenantName": "${token认证}[resp][json][data][tenantName]",
+                      "diffOrderNo": "${查询差异单列表}[resp][json][result][records][0][diffOrderNo]",
+                      "shopId": "${查询差异单列表}[resp][json][result][records][0][shopId]",
+                      "shopCode": "${查询差异单列表}[resp][json][result][records][0][shopCode]",
+                      "shopName": "${查询差异单列表}[resp][json][result][records][0][shopName]",
+                      "status": "${查询差异单列表}[resp][json][result][records][0][status]"
+                    }
+                  ],
+                  "total": "1",
+                  "size": "1",
+                  "current": "1"
+                },
+                "message": "成功"
+              }
             }
           }
         ]
